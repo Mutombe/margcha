@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
   ArrowRight, 
@@ -13,6 +14,7 @@ const ProjectsPage = () => {
   const [filter, setFilter] = useState('all');
   const [projects, setProjects] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+    const navigate = useNavigate();
 
   // Mock projects data - in a real implementation this would come from an API
   const allProjects = [
@@ -287,6 +289,7 @@ const ProjectsPage = () => {
           </p>
           <motion.button
             whileHover={{ scale: 1.05 }}
+            onClick={() => navigate('/contact')}
             whileTap={{ scale: 0.95 }}
             className="px-8 py-3 bg-white text-maroon-800 rounded-lg font-semibold hover:bg-gray-100 transition-colors duration-300 flex items-center gap-2 mx-auto"
           >

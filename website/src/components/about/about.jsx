@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import {
+import { useNavigate } from 'react-router-dom';
+import { 
   Users,
   Target,
   CheckCircle,
@@ -16,6 +17,7 @@ import {
 } from 'lucide-react';
 
 const AboutPage = () => {
+    const navigate = useNavigate();
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -359,6 +361,7 @@ const AboutPage = () => {
               <div className="mt-8">
                 <motion.button
                   whileHover={{ scale: 1.05 }}
+                  onClick={() => navigate('/projects')}
                   whileTap={{ scale: 0.95 }}
                   className="px-8 py-3 bg-maroon-600 text-white rounded-lg font-semibold hover:bg-maroon-700 transition-colors duration-300 flex items-center gap-2"
                 >
@@ -410,6 +413,7 @@ const AboutPage = () => {
           </p>
           <motion.button
             whileHover={{ scale: 1.05 }}
+            onClick={() => navigate('/contact')}
             whileTap={{ scale: 0.95 }}
             className="px-8 py-3 bg-maroon-600 text-white rounded-lg font-semibold hover:bg-maroon-700 transition-colors duration-300"
           >

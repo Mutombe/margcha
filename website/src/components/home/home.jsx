@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { 
   Menu, 
   X, 
@@ -28,6 +29,7 @@ import {
 } from 'lucide-react';
 
 const HomePage = () => {
+    const navigate = useNavigate();
     const fadeInUp = {
       initial: { opacity: 0, y: 60 },
       animate: { opacity: 1, y: 0 },
@@ -36,11 +38,6 @@ const HomePage = () => {
   
     return (
       <div className="relative min-h-screen">
-    
-        
-        {/* Hero Section */}
-        // Enhanced Hero Section for HomePage.jsx
-// Replace the existing Hero Section with this code
 
 {/* Hero Section */}
 <motion.section 
@@ -107,6 +104,7 @@ const HomePage = () => {
         >
           <motion.button
             whileHover={{ scale: 1.05 }}
+            onClick={() => navigate('/services')}
             whileTap={{ scale: 0.95 }}
             className="px-8 py-4 bg-maroon-600 hover:bg-maroon-700 text-white rounded-lg font-semibold flex items-center gap-2 shadow-lg"
           >
@@ -115,6 +113,7 @@ const HomePage = () => {
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
+            onClick={() => navigate('/projects')}
             className="px-8 py-4 bg-transparent border-2 border-white text-white rounded-lg font-semibold hover:bg-white/10 shadow-lg"
           >
             View Projects
@@ -163,6 +162,7 @@ const HomePage = () => {
             
             <motion.button
               whileHover={{ scale: 1.03 }}
+              onClick={() => navigate('/contact')}
               whileTap={{ scale: 0.97 }}
               className="w-full px-6 py-3 bg-gradient-to-r from-maroon-600 to-maroon-700 hover:from-maroon-700 hover:to-maroon-800 text-white rounded-lg text-lg font-medium transition-colors duration-300 flex items-center justify-center shadow-md"
             >
@@ -235,6 +235,7 @@ const HomePage = () => {
                       <div className="p-4">
                         <motion.button
                           whileHover={{ scale: 1.05 }}
+                            onClick={() => navigate('/products')}
                           whileTap={{ scale: 0.95 }}
                           className="px-4 py-2 bg-white text-maroon-700 rounded-md text-sm font-medium flex items-center gap-2"
                         >
@@ -347,6 +348,7 @@ const HomePage = () => {
                   <p className="text-xl mb-4">Get it in 3 Installments</p>
                   <motion.button
                     whileHover={{ scale: 1.05 }}
+                    onClick={() => navigate('/contact')}
                     whileTap={{ scale: 0.95 }}
                     className="px-6 py-3 bg-white text-maroon-800 rounded-lg font-semibold hover:bg-gray-100 transition-colors duration-300"
                   >
@@ -404,6 +406,7 @@ const HomePage = () => {
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
+                onClick={() => navigate('/contact')}
                 className="px-8 py-3 bg-white text-maroon-800 rounded-lg font-semibold hover:bg-gray-100 transition-colors duration-300 flex items-center gap-2"
               >
                 <Phone size={20} />
@@ -411,6 +414,7 @@ const HomePage = () => {
               </motion.button>
               <motion.button
                 whileHover={{ scale: 1.05 }}
+                onClick={() => navigate('/contact')}
                 whileTap={{ scale: 0.95 }}
                 className="px-8 py-3 bg-transparent border-2 border-white text-white rounded-lg font-semibold hover:bg-white/10 flex items-center gap-2"
               >

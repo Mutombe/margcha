@@ -27,7 +27,6 @@ import {
   ArrowUpRight
 } from 'lucide-react';
 
-// Top Info Bar Component
 const InfoBar = () => {
   return (
     <div className="bg-maroon-800 text-white py-2 hidden md:block">

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import {
+import { 
   Ruler,
   Grid,
   Paintbrush,
@@ -252,10 +252,10 @@ const ServicesPage = () => {
             transition={{ delay: 0.4 }}
             className="flex flex-wrap justify-center gap-4"
           >
-            <button className="px-8 py-3 bg-maroon-600 hover:bg-maroon-700 text-white rounded-lg font-semibold transition-colors duration-300" onClick={() =>Navigate('/projects')}>
+            <button className="px-8 py-3 bg-maroon-600 hover:bg-maroon-700 text-white rounded-lg font-semibold transition-colors duration-300" onClick={() =>navigate('/projects')}>
               View Our Portfolio
             </button>
-            <button className="px-8 py-3 bg-transparent border-2 border-white hover:bg-white/10 text-white rounded-lg font-semibold transition-colors duration-300">
+            <button className="px-8 py-3 bg-transparent border-2 border-white hover:bg-white/10 text-white rounded-lg font-semibold transition-colors duration-300" onClick={() => navigate('/contact')}>
               Request a Quote
             </button>
           </motion.div>
@@ -342,7 +342,7 @@ const ServicesPage = () => {
                       <div className="p-4">
                         <h5 className="text-lg font-semibold text-gray-900 mb-2">{product.name}</h5>
                         <p className="text-gray-600 text-sm">{product.description}</p>
-                        <button className="mt-4 flex items-center text-maroon-600 font-medium hover:text-maroon-700 transition-colors duration-300">
+                        <button className="mt-4 flex items-center text-maroon-600 font-medium hover:text-maroon-700 transition-colors duration-300" onClick={() => navigate('/projects')}>
                           Learn More <ArrowRight className="w-4 h-4 ml-1" />
                         </button>
                       </div>
@@ -524,6 +524,7 @@ const ServicesPage = () => {
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
+                onClick={() => navigate('/contact')}
                 className="w-full px-8 py-4 bg-white text-maroon-600 rounded-lg font-semibold hover:bg-gray-100 transition-colors duration-300 text-lg flex items-center justify-center gap-2"
               >
                 Schedule a Consultation <ArrowRight className="w-5 h-5" />
