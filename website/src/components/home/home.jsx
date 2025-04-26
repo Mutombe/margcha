@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Typography, Grid, TextField, Button } from '@mui/material';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { 
@@ -792,6 +793,11 @@ const HomePage = () => {
             <p className="text-sm">&copy; {new Date().getFullYear()} Margcha Shopfitting. All rights reserved.</p>
           </div>
         </div>
+        <div className="mt-4 text-center">
+            <Typography variant="body2" className="!text-blue-100">
+              Developed by <a href="https://zettabyte.co.zw" className="!text-maroon-400 hover:!text-white !transition-colors" target="_blank" rel="noopener noreferrer">Zettabyte</a>
+            </Typography>
+          </div>
       </footer>
     </div>
   );
