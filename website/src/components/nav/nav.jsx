@@ -27,6 +27,8 @@ import {
   ArrowUpRight
 } from 'lucide-react';
 
+
+
 const InfoBar = () => {
   return (
     <div className="bg-maroon-800 text-white py-2 hidden md:block">
@@ -110,17 +112,8 @@ const NavBar = () => {
               className="flex-shrink-0 flex items-center"
             >
                 <a href="/" className="flex items-center">
-              <div className="text-maroon-800 mr-2">
-                <svg width="40" height="40" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M20 80L50 20L80 80H60L50 60L40 80H20Z" fill="#8B0000" />
-                </svg>
-              </div>
-              <div>
-                <span className="text-2xl font-bold text-gray-800">
-                  Margcha <span className="text-maroon-700">Shopfitting</span>
-                </span>
-                <p className="text-xs text-maroon-600 font-medium">ALUMINUM FABRICATION & JOINERY</p>
-              </div></a>
+                  <img className="h-16 w-30 rounded-sm" src='/logo4.png' alt="Logo" />
+                </a>
             </motion.div>
 
             {/* Desktop Menu */}
@@ -141,6 +134,7 @@ const NavBar = () => {
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
+                  onClick={() => window.location.href = '/contact'}
                   className="ml-4 px-4 py-2 bg-maroon-700 hover:bg-maroon-800 text-white rounded-md text-sm font-medium transition-colors duration-300 flex items-center"
                 >
                   <Phone size={16} className="mr-2" />
