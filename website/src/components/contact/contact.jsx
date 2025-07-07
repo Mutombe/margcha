@@ -1060,25 +1060,25 @@ const ContactPage = () => {
             className="flex flex-wrap justify-center gap-4 md:gap-6"
           >
             <a
-              href="#"
+              href="https://www.facebook.com/share/14DcFhcoebh/?mibextid=wwXIfr"
               className="inline-flex items-center justify-center w-12 h-12 md:w-14 md:h-14 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors duration-300"
             >
               <Facebook className="w-5 h-5 md:w-6 md:h-6" />
             </a>
             <a
-              href="#"
+              href="https://www.instagram.com/margcha.shopfitting?igsh=MXg5ZW1kazkxZ3UycQ=="
               className="inline-flex items-center justify-center w-12 h-12 md:w-14 md:h-14 bg-pink-600 text-white rounded-full hover:bg-pink-700 transition-colors duration-300"
             >
               <Instagram className="w-5 h-5 md:w-6 md:h-6" />
             </a>
             <a
-              href="#"
+              href="https://www.linkedin.com/in/margcha-shopfitting-1428b6269?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
               className="inline-flex items-center justify-center w-12 h-12 md:w-14 md:h-14 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-colors duration-300"
             >
               <Linkedin className="w-5 h-5 md:w-6 md:h-6" />
             </a>
             <a
-              href="#"
+              href="https://x.com/margchash?t=y0a2AxRqvXI4vHFxV-Jusw&s=09"
               className="inline-flex items-center justify-center w-12 h-12 md:w-14 md:h-14 bg-blue-400 text-white rounded-full hover:bg-blue-500 transition-colors duration-300"
             >
               <Twitter className="w-5 h-5 md:w-6 md:h-6" />

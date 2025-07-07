@@ -54,16 +54,16 @@ const InfoBar = () => {
               <span>Mon-Fri: 8AM-5PM</span>
             </div>
             <div className="flex space-x-2">
-              <a href="#" className="hover:text-gray-300 transition-colors">
+              <a href="https://www.facebook.com/share/14DcFhcoebh/?mibextid=wwXIfr" className="hover:text-gray-300 transition-colors">
                 <Facebook size={16} />
               </a>
-              <a href="#" className="hover:text-gray-300 transition-colors">
+              <a href="https://www.instagram.com/margcha.shopfitting?igsh=MXg5ZW1kazkxZ3UycQ==" className="hover:text-gray-300 transition-colors">
                 <Instagram size={16} />
               </a>
-              <a href="#" className="hover:text-gray-300 transition-colors">
+              <a href="https://x.com/margchash?t=y0a2AxRqvXI4vHFxV-Jusw&s=09" className="hover:text-gray-300 transition-colors">
                 <Twitter size={16} />
               </a>
-              <a href="#" className="hover:text-gray-300 transition-colors">
+              <a href="https://www.linkedin.com/in/margcha-shopfitting-1428b6269?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" className="hover:text-gray-300 transition-colors">
                 <Linkedin size={16} />
               </a>
             </div>
