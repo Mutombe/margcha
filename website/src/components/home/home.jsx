@@ -52,6 +52,26 @@ const EnhancedHeroSection = () => {
     "16.jpg",
   ];
 
+  // Combine with Intersection Observer API
+useEffect(() => {
+  const lazyImages = [...document.querySelectorAll('.lazyload')];
+  
+  if ('IntersectionObserver' in window) {
+    const imageObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const img = entry.target;
+          img.src = img.dataset.src;
+          img.classList.remove('lazyload');
+          imageObserver.unobserve(img);
+        }
+      });
+    });
+
+    lazyImages.forEach(img => imageObserver.observe(img));
+  }
+}, []);
+
   //handle action buttons
   const handleAction = (action) => {
     if (action === "call") {
