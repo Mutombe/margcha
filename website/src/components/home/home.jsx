@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Typography, Grid, TextField, Button } from "@mui/material";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+
 import {
   Menu,
   X,
@@ -23,6 +24,7 @@ import {
   ArrowRight,
   Calendar,
   CheckCircle,
+
   Facebook,
   Instagram,
   Twitter,
@@ -33,6 +35,7 @@ import {
   Layers,
   Star,
 } from "lucide-react";
+import { IoLogoWhatsapp } from "react-icons/io";
 
 const EnhancedHeroSection = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -78,6 +81,8 @@ useEffect(() => {
       window.location.href = "tel:+263783574677";
     } else if (action === "email") {
       window.location.href = "mailto:sales@margchashopfitting.com";
+    } else if (action === "whatsapp") {
+      window.location.href = "https://wa.me/263783574677?text=Hello%20Margcha%20Shopfitting";
     }
   };
 
@@ -439,6 +444,12 @@ useEffect(() => {
 
       {/* Floating Action Elements */}
       <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-3">
+        <button
+          className="group bg-white hover:bg-green-300 text-white p-3 rounded-full shadow-2xl transform hover:scale-110 transition-all duration-300"
+          onClick={() => handleAction("whatsapp")}
+        >
+          <IoLogoWhatsapp className="w-6 h-6 group-hover:rotate-12 transition-transform text-green-600" />
+        </button>
         <button
           className="group bg-green-600 hover:bg-green-700 text-white p-3 rounded-full shadow-2xl transform hover:scale-110 transition-all duration-300"
           onClick={() => handleAction("call")}
