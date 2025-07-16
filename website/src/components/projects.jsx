@@ -39,7 +39,7 @@ const ProjectsPage = () => {
       description: "Custom aluminum shopfront with large display windows and automatic sliding doors for a high-end clothing retailer.",
       completionDate: "January 2024",
       features: ["Frameless Glass Display", "Automated Doors", "LED Integration", "Custom Signage"],
-      images: ["/11.jpg", "/12.jpg", "/3.jpg"],
+      images: ["/shopfront2.jpeg", "/shopfront3.jpeg", "/shopfront1.jpeg"],
       testimonial: {
         text: "Margcha transformed our retail space with their exceptional craftsmanship. The shopfront has significantly increased foot traffic and customer engagement.",
         author: "Fashion Retailer, Harare"
@@ -95,7 +95,7 @@ const ProjectsPage = () => {
       description: "Installation of folding glass doors to create flexible indoor-outdoor dining space for an upscale restaurant.",
       completionDate: "May 2024",
       features: ["Weather-Resistant Design", "Smooth Operation System", "Custom Sizing", "Enhanced Sound Insulation"],
-      images: ["/5.jpg", "/6.jpg", "/8.jpg"],
+      images: ["/vista1.jpeg", "/vista2.jpeg", "/vista3.jpeg"],
       testimonial: {
         text: "The folding doors have revolutionized our dining experience, allowing us to adapt to weather changes while maintaining a seamless connection to our outdoor space.",
         author: "Restaurant Owner"
@@ -109,7 +109,7 @@ const ProjectsPage = () => {
       description: "Custom shower enclosures for 35 premium hotel rooms, featuring frameless glass design and premium hardware.",
       completionDate: "June 2024",
       features: ["Frameless Design", "Anti-Scale Glass", "Premium Hardware", "Custom Etching"],
-      images: ["/8.jpg", "/9.jpg", "/16.jpg"],
+      images: ["/showe1.jpeg", "/shower2.jpeg", "/shower3.jpeg"],
       testimonial: {
         text: "Margcha delivered exceptional quality shower enclosures that perfectly complement our luxury rooms. Their installation team was professional and efficient.",
         author: "Hospitality Manager, Victoria Falls"

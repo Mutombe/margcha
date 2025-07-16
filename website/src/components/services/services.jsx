@@ -69,12 +69,12 @@ const ServicesPage = () => {
         {
           name: "Sliding Doors",
           description: "Smooth operation with various thickness options for residential and commercial use.",
-          image: "/3.jpg"
+          image: "/galaxysliding3.jpeg"
         },
         {
           name: "Hinged Doors",
           description: "Full panel glass and aluminium finish for secure spaces with high traffic volumes.",
-          image: "/4.jpg"
+          image: "/vista1.jpeg"
         }
       ]
     },
