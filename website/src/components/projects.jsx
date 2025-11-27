@@ -29,7 +29,7 @@ const ProjectsPage = () => {
   const [favoriteProjects, setFavoriteProjects] = useState([]);
   const navigate = useNavigate();
 
-  // Mock projects data - in a real implementation this would come from an API
+// Mock projects data - in a real implementation this would come from an API
   const allProjects = [
     {
       id: 1,
@@ -113,6 +113,62 @@ const ProjectsPage = () => {
       testimonial: {
         text: "Margcha delivered exceptional quality shower enclosures that perfectly complement our luxury rooms. Their installation team was professional and efficient.",
         author: "Hospitality Manager, Victoria Falls"
+      }
+    },
+    {
+      id: 7,
+      title: "Kadoma Steel to Aluminum Conversion",
+      category: "residential",
+      location: "Kadoma",
+      description: "Complete conversion of outdated steel windows and doors to modern aluminum and glass systems, enhancing both aesthetics and functionality.",
+      completionDate: "July 2024",
+      features: ["Steel Removal & Replacement", "Energy Efficient Glass", "Modern Aluminum Frames", "Enhanced Security Features"],
+      images: ["/compo/1.jpeg", "/compo/2.jpeg", "/compo/3.jpeg", "/compo/4.jpeg", "/compo/5.jpeg", "/compo/6.jpeg"],
+      testimonial: {
+        text: "Margcha seamlessly converted our old steel fixtures to beautiful aluminum systems. The transformation has improved our property's appearance and security dramatically.",
+        author: "Property Owner, Kadoma"
+      }
+    },
+    {
+      id: 8,
+      title: "Zimbabwe Tourism Authority Security Installation",
+      category: "specialized",
+      location: "Harare",
+      description: "Installation of retractable security burglar bars for the Zimbabwe Tourism Authority offices, providing enhanced security without compromising aesthetics.",
+      completionDate: "August 2024",
+      features: ["Retractable Design", "High-Strength Materials", "Emergency Quick Release", "Powder-Coated Finish"],
+      images: ["/2/1.jpeg", "/2/2.jpeg", "/2/3.jpeg", "/2/4.jpeg", "/2/5.jpeg", "/2/6.jpeg", "/2/7.jpeg",],
+      testimonial: {
+        text: "The retractable burglar bars installed by Margcha provide the security we need while maintaining the professional appearance of our offices. Excellent workmanship.",
+        author: "Facilities Manager, ZTA"
+      }
+    },
+    {
+      id: 9,
+      title: "Mt Pleasant Residential Installation",
+      category: "residential",
+      location: "Mt Pleasant, Harare",
+      description: "Complete aluminum windows and doors installation for a modern family home, featuring contemporary designs and energy-efficient solutions.",
+      completionDate: "September 2024",
+      features: ["Slim Profile Frames", "Double Glazing Options", "Custom Color Matching", "Advanced Locking Systems"],
+      images: ["/3/1.jpeg", "/3/2.jpeg", "/3/3.jpeg", "/3/4.jpeg","/3/5.jpeg", "/3/6.jpeg", "/3/7.jpeg",],
+      testimonial: {
+        text: "Margcha's team was professional from consultation to installation. The new aluminum windows and doors have completely modernized our home's appearance.",
+        author: "Homeowner, Mt Pleasant"
+      }
+    },
+    {
+      id: 10,
+      title: "Crowhill Premium Installation",
+      category: "residential",
+      location: "Crowhill, Harare",
+      description: "High-end aluminum windows and doors installation for an upscale residence, combining luxury aesthetics with superior performance.",
+      completionDate: "October 2024",
+      features: ["Premium Aluminum Systems", "Architectural Glass", "Custom Hardware", "Integrated Screens"],
+      images: ["/4/1.jpeg", "/4/2.jpeg", "/4/3.jpeg", "/4/4.jpeg", "/4/5.jpeg", "/4/6.jpeg", "/4/7.jpeg",],
+      testimonial: {
+        text: "The quality of Margcha's aluminum systems is exceptional. Every detail was executed perfectly, from the initial measurements to the final installation.",
+        author: "Homeowner, Crowhill"
       }
     }
   ];
