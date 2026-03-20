@@ -1,1431 +1,434 @@
-import React, { useState, useEffect } from "react";
-import { Typography, Grid, TextField, Button } from "@mui/material";
-import { motion } from "framer-motion";
-import { useNavigate } from "react-router-dom";
-
+import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import {
-  Menu,
-  X,
-  ChevronDown,
-  Phone,
-  Mail,
-  MapPin,
-  Shield,
-  Sparkles,
-  Clock,
-  Home,
-  Briefcase,
-  Hammer,
-  Info,
-  PhoneCall,
-  Building2,
-  Cog,
-  Award,
-  ArrowRight,
-  Calendar,
-  CheckCircle,
+  Phone, EnvelopeSimple, CaretDown, ShieldCheck, Medal, ArrowRight,
+  Clock, CheckCircle, CreditCard, Star, Buildings, Hammer, GearSix,
+  ArrowUpRight, Quotes, Sparkle, Lightning, Handshake, Users,
+} from '@phosphor-icons/react';
+import { IoLogoWhatsapp } from 'react-icons/io';
+import OptimizedImage from '../shared/OptimizedImage';
+import SectionHeader from '../shared/SectionHeader';
 
-  Facebook,
-  Instagram,
-  Twitter,
-  Linkedin,
-  CreditCard,
-  ArrowUpRight,
-  ChevronRight,
-  Layers,
-  Star,
-} from "lucide-react";
-import { IoLogoWhatsapp } from "react-icons/io";
+/* ─── Hero ─── */
+const heroImages = ['/7.jpg', '/8.jpg', '/9.jpg', '/10.jpg', '/11.jpg'];
 
-const EnhancedHeroSection = () => {
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [isVisible, setIsVisible] = useState(false);
-
-  // Background carousel images
-  const backgroundImages = [
-    "7.jpg",
-    "8.jpg",
-    "9.jpg",
-    "10.jpg",
-    "11.jpg",
-    "12.jpg",
-    "13.jpg",
-    "14.jpg",
-    "15.jpg",
-    "16.jpg",
-  ];
-
-  // Combine with Intersection Observer API
-useEffect(() => {
-  const lazyImages = [...document.querySelectorAll('.lazyload')];
-  
-  if ('IntersectionObserver' in window) {
-    const imageObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          const img = entry.target;
-          img.src = img.dataset.src;
-          img.classList.remove('lazyload');
-          imageObserver.unobserve(img);
-        }
-      });
-    });
-
-    lazyImages.forEach(img => imageObserver.observe(img));
-  }
-}, []);
-
-  //handle action buttons
-  const handleAction = (action) => {
-    if (action === "call") {
-      window.location.href = "tel:+263783574677";
-    } else if (action === "email") {
-      window.location.href = "mailto:sales@margchashopfitting.com";
-    } else if (action === "whatsapp") {
-      window.location.href = "https://wa.me/263783574677?text=Hello%20Margcha%20Shopfitting";
-    }
-  };
+const HeroSection = () => {
+  const [current, setCurrent] = useState(0);
 
   useEffect(() => {
-    setIsVisible(true);
-    const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % backgroundImages.length);
-    }, 5000);
-    return () => clearInterval(interval);
+    const timer = setInterval(() => setCurrent((p) => (p + 1) % heroImages.length), 6000);
+    return () => clearInterval(timer);
   }, []);
 
-  const navigate = (path) => {
-    console.log(`Navigating to ${path}`);
-  };
-
   return (
-    <section className="relative min-h-screen flex items-center pt-16 pb-8 overflow-hidden">
-      {/* Enhanced Background Carousel */}
-      <div className="absolute inset-0 z-0">
-        {backgroundImages.map((img, index) => (
-          <div
-            key={index}
-            className={`absolute inset-0 transition-opacity duration-2000 ${
-              index === currentSlide ? "opacity-100" : "opacity-0"
-            }`}
-          >
-            <img
-              src={img}
-              alt={`Background ${index + 1}`}
-              className="w-full h-full object-cover transform scale-105 hover:scale-110 transition-transform duration-10000"
-            />
+    <section className="relative min-h-[100svh] flex items-center overflow-hidden">
+      {/* Blended backgrounds */}
+      <div className="absolute inset-0">
+        {heroImages.map((img, i) => (
+          <div key={img} className={`absolute inset-0 transition-opacity duration-[2000ms] ${i === current ? 'opacity-100' : 'opacity-0'}`}>
+            <img src={img} alt="" loading={i === 0 ? 'eager' : 'lazy'} className="w-full h-full object-cover scale-105" />
           </div>
         ))}
-
-        {/* Multi-layer Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-black/80 via-red-900/60 to-black/80 z-10"></div>
-        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-black/40 z-20"></div>
-
-        {/* Animated Particles */}
-        <div className="absolute inset-0 z-25">
-          {[...Array(15)].map((_, i) => (
-            <div
-              key={i}
-              className="absolute w-2 h-2 bg-red-400/20 rounded-full animate-pulse"
-              style={{
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-                animationDelay: `${Math.random() * 5}s`,
-                animationDuration: `${3 + Math.random() * 4}s`,
-              }}
-            />
-          ))}
-        </div>
+        <div className="absolute inset-0 bg-gradient-to-r from-maroon-950/80 via-maroon-950/60 to-maroon-900/40 z-10" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/15 to-transparent z-20" />
       </div>
 
-      {/* Carousel Indicators */}
-      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 z-40">
-        {backgroundImages.map((_, index) => (
-          <button
-            key={index}
-            onClick={() => setCurrentSlide(index)}
-            className={`w-3 h-3 rounded-full transition-all duration-300 ${
-              index === currentSlide
-                ? "bg-red-500 scale-125"
-                : "bg-white/40 hover:bg-white/60"
-            }`}
-          />
+      {/* Carousel dots */}
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-40">
+        {heroImages.map((_, i) => (
+          <button key={i} onClick={() => setCurrent(i)}
+            className={`h-1.5 rounded-full transition-all duration-500 ${i === current ? 'w-8 bg-white' : 'w-3 bg-white/30'}`} />
         ))}
       </div>
 
-      {/* Main Content */}
-      <div className="relative z-30 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex flex-col xl:flex-row items-center justify-between gap-8 lg:gap-16">
-          {/* Left Content - Enhanced */}
-          <div className="w-full xl:w-3/5 text-center xl:text-left">
-            {/* Animated Badge */}
-            <div
-              className={`mb-6 inline-block transform transition-all duration-1000 ${
-                isVisible
-                  ? "translate-y-0 opacity-100"
-                  : "translate-y-10 opacity-0"
-              }`}
-            >
-              <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-r from-red-600 to-red-800 rounded-full blur-lg opacity-60 animate-pulse"></div>
-                <div className="relative bg-gradient-to-r from-red-700 to-red-900 px-6 py-3 rounded-full text-white text-sm font-bold shadow-2xl border border-red-500/50">
-                  <div className="flex items-center gap-2">
-                    <Award
-                      className="w-4 h-4 animate-spin"
-                      style={{ animationDuration: "3s" }}
-                    />
-                    <span className="animate-pulse">
-                      PREMIER ALUMINIUM FABRICATION & JOINERY
-                    </span>
-                    <Award
-                      className="w-4 h-4 animate-spin"
-                      style={{
-                        animationDuration: "3s",
-                        animationDirection: "reverse",
-                      }}
-                    />
-                  </div>
-                </div>
-              </div>
+      {/* Content */}
+      <div className="relative z-30 container-width py-24 md:py-0">
+        <div className="flex flex-col xl:flex-row items-center justify-between gap-10 lg:gap-16">
+          {/* Left */}
+          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}
+            className="w-full xl:w-3/5 text-center xl:text-left">
+            <div className="glass inline-flex items-center gap-2 px-4 py-2 text-white text-caption font-semibold mb-6">
+              <Medal size={14} weight="fill" className="text-yellow-300" />
+              PREMIER ALUMINIUM FABRICATION & JOINERY
             </div>
 
-            {/* Enhanced Title */}
-            <h1
-              className={`text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black text-white mb-6 leading-tight transform transition-all duration-1000 delay-200 ${
-                isVisible
-                  ? "translate-y-0 opacity-100"
-                  : "translate-y-10 opacity-0"
-              }`}
-            >
-              <span className="relative">
-                Crafting Excellence in
-                <div className="absolute -inset-1 bg-gradient-to-r from-red-600 to-red-800 blur-xl opacity-30 animate-pulse"></div>
-              </span>
-              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-red-500 to-red-600 animate-pulse">
+            <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl xl:text-7xl font-bold text-white leading-[1.08] tracking-tight mb-6 text-shadow-hero">
+              Crafting Excellence in{' '}
+              <span className="bg-gradient-to-r from-maroon-200 to-white bg-clip-text text-transparent">
                 Shopfitting Solutions
               </span>
             </h1>
 
-            {/* Enhanced Description */}
-            <p
-              className={`text-lg md:text-xl lg:text-2xl text-gray-200 mb-8 max-w-4xl mx-auto xl:mx-0 leading-relaxed transform transition-all duration-1000 delay-400 ${
-                isVisible
-                  ? "translate-y-0 opacity-100"
-                  : "translate-y-10 opacity-0"
-              }`}
-            >
-              Specialized in{" "}
-              <span className="text-red-400 font-semibold">
-                premium Aluminium Fabrication
-              </span>{" "}
-              and
-              <span className="text-red-400 font-semibold"> Joinery</span>,
-              delivering exceptional craftsmanship for your commercial spaces.
+            <p className="text-lg md:text-xl text-gray-300 mb-8 max-w-2xl mx-auto xl:mx-0 leading-relaxed">
+              Specialized in premium <Link to="/services" className="text-maroon-200 hover:text-white underline decoration-maroon-300/50 underline-offset-2 transition-colors">aluminium fabrication</Link> and{' '}
+              <Link to="/services" className="text-maroon-200 hover:text-white underline decoration-maroon-300/50 underline-offset-2 transition-colors">joinery</Link>, delivering exceptional craftsmanship for your{' '}
+              <Link to="/projects" className="text-maroon-200 hover:text-white underline decoration-maroon-300/50 underline-offset-2 transition-colors">commercial and residential spaces</Link>.
             </p>
 
-            {/* Enhanced Buttons */}
-            <div
-              className={`flex flex-col sm:flex-row justify-center xl:justify-start gap-4 mb-12 transform transition-all duration-1000 delay-600 ${
-                isVisible
-                  ? "translate-y-0 opacity-100"
-                  : "translate-y-10 opacity-0"
-              }`}
-            >
-              <button
-                onClick={() => navigate("/services")}
-                className="group relative px-8 py-4 bg-gradient-to-r from-red-600 to-red-800 hover:from-red-700 hover:to-red-900 text-white rounded-xl font-bold text-lg shadow-2xl transform hover:scale-105 transition-all duration-300 overflow-hidden"
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-red-400 to-red-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                <div className="relative flex items-center justify-center gap-3">
-                  <span>Our Services</span>
-                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                </div>
-              </button>
-
-              <button
-                onClick={() => navigate("/projects")}
-                className="group px-8 py-4 bg-transparent border-2 border-white/80 text-white rounded-xl font-bold text-lg hover:bg-white/10 shadow-2xl transform hover:scale-105 transition-all duration-300 backdrop-blur-sm"
-              >
-                <div className="flex items-center justify-center gap-3">
-                  <span>View Projects</span>
-                  <div className="w-5 h-5 rounded-full border-2 border-current group-hover:rotate-90 transition-transform"></div>
-                </div>
-              </button>
+            <div className="flex flex-col sm:flex-row justify-center xl:justify-start gap-3 sm:gap-4 mb-10">
+              <Link to="/services" className="btn-primary !py-4 !px-8 !text-base !rounded-2xl">
+                Our Services <ArrowRight size={18} weight="bold" />
+              </Link>
+              <Link to="/projects" className="btn-ghost !py-4 !px-8 !text-base !rounded-2xl">
+                View Projects
+              </Link>
             </div>
 
-            {/* Trust Indicators */}
-            <div
-              className={`flex flex-wrap justify-center xl:justify-start gap-6 transform transition-all duration-1000 delay-800 ${
-                isVisible
-                  ? "translate-y-0 opacity-100"
-                  : "translate-y-10 opacity-0"
-              }`}
-            >
+            <div className="flex flex-wrap justify-center xl:justify-start gap-x-5 gap-y-3">
               {[
-                {
-                  icon: Shield,
-                  text: "Licensed & Insured",
-                  color: "text-green-400",
-                },
-                {
-                  icon: Award,
-                  text: "10+ Years Experience",
-                  color: "text-yellow-400",
-                },
-                { icon: Clock, text: "24/7 Support", color: "text-blue-400" },
-              ].map((item, index) => (
-                <div
-                  key={index}
-                  className="flex items-center gap-2 text-white/80"
-                >
-                  <item.icon className={`w-5 h-5 ${item.color}`} />
-                  <span className="text-sm font-medium">{item.text}</span>
+                { icon: ShieldCheck, text: 'Licensed & Insured', color: 'text-green-400' },
+                { icon: Medal, text: 'Quality Guaranteed', color: 'text-yellow-400' },
+                { icon: Clock, text: 'On-Time Delivery', color: 'text-blue-400' },
+              ].map(({ icon: Icon, text, color }) => (
+                <div key={text} className="flex items-center gap-2 text-white/60">
+                  <Icon size={16} weight="fill" className={color} />
+                  <span className="text-body-sm font-medium">{text}</span>
                 </div>
               ))}
             </div>
-          </div>
+          </motion.div>
 
-          {/* Right Content - Super Enhanced Payment Card */}
-          <div
-            className={`w-full max-w-lg xl:w-2/5 transform transition-all duration-1000 delay-1000 ${
-              isVisible
-                ? "translate-y-0 opacity-100 scale-100"
-                : "translate-y-10 opacity-0 scale-95"
-            }`}
-          >
-            <div className="relative group">
-              {/* Glowing Background */}
-              <div className="absolute -inset-4 bg-gradient-to-r from-red-600 via-red-700 to-red-800 rounded-3xl blur-xl opacity-60 group-hover:opacity-80 transition-opacity duration-300 animate-pulse"></div>
-
-              {/* Main Card */}
-              <div className="relative bg-gradient-to-br from-white via-gray-50 to-white rounded-3xl shadow-2xl overflow-hidden transform hover:scale-105 transition-all duration-500 border-2 border-red-200">
-                {/* Header Section */}
-                <div className="relative bg-gradient-to-r from-red-800 via-red-900 to-red-800 text-white py-6 px-6 overflow-hidden">
-                  <div className="absolute inset-0 opacity-20">
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12 animate-pulse"></div>
-                  </div>
-
-                  <div className="relative text-center">
-                    <div className="flex justify-center mb-3">
-                      <div className="bg-white/20 p-2 rounded-full">
-                        <Star className="w-8 h-8 text-yellow-300 animate-pulse" />
-                      </div>
-                    </div>
-                    <h3 className="text-2xl font-black mb-4 tracking-wider">
-                      WE ARE
-                    </h3>
-                    <div className="space-y-2">
-                      {[
-                        "TRUSTWORTHY",
-                        "FLEXIBLE",
-                        "AFFORDABLE",
-                        "ON POINT",
-                        "& ON TIME",
-                      ].map((text, i) => (
-                        <div key={i} className="relative">
-                          <p
-                            className={`text-xl md:text-2xl font-black animate-pulse`}
-                            style={{ animationDelay: `${i * 0.2}s` }}
-                          >
-                            {text}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Body Section */}
-                <div className="p-6">
-                  <div className="text-center mb-6">
-                    <h4 className="text-2xl font-black text-gray-800 mb-2">
-                      Get it in{" "}
-                      <span className="text-red-700 animate-pulse">
-                        3 Installments
-                      </span>
-                    </h4>
-                    <p className="text-gray-600 font-medium">
-                      Flexible payment terms available
-                    </p>
-                  </div>
-
-                  {/* Payment Steps */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                    {[
-                      {
-                        step: "Step 1",
-                        amount: "60%",
-                        desc: "Initial deposit",
-                        delay: "0s",
-                      },
-                      {
-                        step: "Step 2",
-                        amount: "20%",
-                        desc: "After 31 days",
-                        delay: "0.2s",
-                      },
-                      {
-                        step: "Step 3",
-                        amount: "20%",
-                        desc: "Final payment",
-                        delay: "0.4s",
-                      },
-                    ].map((item, index) => (
-                      <div
-                        key={index}
-                        className="relative group/step"
-                        style={{ animationDelay: item.delay }}
-                      >
-                        <div className="absolute inset-0 bg-gradient-to-r from-red-600 to-red-800 rounded-xl blur-lg opacity-0 group-hover/step:opacity-60 transition-opacity duration-300"></div>
-                        <div className="relative bg-gradient-to-br from-red-700 to-red-900 text-white p-4 rounded-xl text-center transform hover:scale-105 transition-all duration-300 shadow-lg">
-                          <div className="flex items-center justify-center mb-2">
-                            <div className="bg-white/20 p-1 rounded-full">
-                              <CreditCard className="w-4 h-4" />
-                            </div>
-                          </div>
-                          <p className="font-black text-lg mb-1">{item.step}</p>
-                          <p className="font-bold text-xl text-yellow-300 mb-1">
-                            {item.amount}
-                          </p>
-                          <p className="text-sm text-red-100">{item.desc}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* CTA Button */}
-                  <button
-                    onClick={() => navigate("/contact")}
-                    className="group/cta relative w-full px-6 py-4 bg-gradient-to-r from-red-600 via-red-700 to-red-800 hover:from-red-700 hover:via-red-800 hover:to-red-900 text-white rounded-xl font-bold text-lg shadow-2xl transform hover:scale-105 transition-all duration-300 overflow-hidden"
-                  >
-                    <div className="absolute inset-0 bg-gradient-to-r from-red-400 to-red-600 opacity-0 group-hover/cta:opacity-100 transition-opacity duration-300"></div>
-                    <div className="relative flex items-center justify-center gap-3">
-                      <CreditCard className="w-5 h-5 group-hover/cta:rotate-12 transition-transform" />
-                      <span>Try our payment terms today</span>
-                      <ArrowRight className="w-5 h-5 group-hover/cta:translate-x-1 transition-transform" />
-                    </div>
-                  </button>
-
-                  {/* Contact Info */}
-                  <div className="mt-6 pt-4 border-t border-gray-200">
-                    <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-                      <div className="flex items-center gap-2 text-gray-600">
-                        <Phone className="w-4 h-4 text-red-600" />
-                        <span className="text-sm font-medium">
-                          +263 78 357 4677
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-2 text-gray-600">
-                        <Mail className="w-4 h-4 text-red-600" />
-                        <span className="text-sm font-medium">
-                          Quick Response
-                        </span>
-                      </div>
-                    </div>
-                  </div>
+          {/* Right — glass payment card */}
+          <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.3 }} className="w-full max-w-md xl:w-2/5">
+            <div className="glass-dark backdrop-blur-2xl overflow-hidden">
+              <div className="bg-gradient-to-br from-maroon-700/60 to-maroon-900/40 text-white py-6 px-6 text-center border-b border-white/10">
+                <Star size={28} weight="fill" className="text-yellow-300 mx-auto mb-3" />
+                <h3 className="font-heading text-xl font-bold tracking-wide mb-3">WE ARE</h3>
+                <div className="space-y-0.5 font-heading font-bold text-lg">
+                  {['TRUSTWORTHY', 'FLEXIBLE', 'AFFORDABLE', 'ON POINT', '& ON TIME'].map((t) => (
+                    <p key={t}>{t}</p>
+                  ))}
                 </div>
               </div>
+              <div className="p-6 bg-white/5">
+                <h4 className="font-heading text-lg font-bold text-white text-center mb-1">
+                  Get it in <span className="text-yellow-300">3 Installments</span>
+                </h4>
+                <p className="text-body-sm text-white/50 text-center mb-5">Flexible payment terms</p>
+                <div className="grid grid-cols-3 gap-2.5 mb-5">
+                  {[
+                    { step: '1', amount: '60%', desc: 'Deposit' },
+                    { step: '2', amount: '20%', desc: 'Day 31' },
+                    { step: '3', amount: '20%', desc: 'Final' },
+                  ].map((item) => (
+                    <div key={item.step} className="glass rounded-xl p-3 text-center">
+                      <p className="text-caption font-semibold text-white/60">Step {item.step}</p>
+                      <p className="text-xl font-bold text-yellow-300">{item.amount}</p>
+                      <p className="text-caption text-white/50">{item.desc}</p>
+                    </div>
+                  ))}
+                </div>
+                <Link to="/contact" className="btn-primary w-full !justify-center !rounded-xl !bg-white !text-maroon-800 hover:!bg-gray-100 !shadow-none">
+                  <CreditCard size={16} weight="bold" />
+                  Try our payment terms
+                </Link>
+              </div>
             </div>
-          </div>
-        </div>
-
-        {/* Enhanced Scroll Indicator */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-white animate-bounce">
-          <div className="flex flex-col items-center gap-2">
-            <span className="text-sm font-medium text-white/80">
-              Scroll to explore
-            </span>
-            <div className="p-2 rounded-full border-2 border-white/40 hover:border-white/80 transition-colors">
-              <ChevronDown className="w-6 h-6" />
-            </div>
-          </div>
+          </motion.div>
         </div>
       </div>
 
-      {/* Floating Action Elements */}
-      <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-3">
-        <button
-          className="group bg-white hover:bg-green-300 text-white p-3 rounded-full shadow-2xl transform hover:scale-110 transition-all duration-300"
-          onClick={() => handleAction("whatsapp")}
-        >
-          <IoLogoWhatsapp className="w-6 h-6 group-hover:rotate-12 transition-transform text-green-600" />
-        </button>
-        <button
-          className="group bg-green-600 hover:bg-green-700 text-white p-3 rounded-full shadow-2xl transform hover:scale-110 transition-all duration-300"
-          onClick={() => handleAction("call")}
-        >
-          <Phone className="w-6 h-6 group-hover:rotate-12 transition-transform" />
-        </button>
-        <button
-          className="group bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-full shadow-2xl transform hover:scale-110 transition-all duration-300"
-          onClick={() => handleAction("email")}
-        >
-          <Mail className="w-6 h-6 group-hover:rotate-12 transition-transform" />
-        </button>
+      {/* Scroll indicator */}
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2 }}
+        className="absolute bottom-14 left-1/2 -translate-x-1/2 z-30 hidden md:flex flex-col items-center text-white/40">
+        <span className="text-caption mb-2">Scroll</span>
+        <motion.div animate={{ y: [0, 6, 0] }} transition={{ duration: 2, repeat: Infinity }}>
+          <CaretDown size={18} weight="bold" />
+        </motion.div>
+      </motion.div>
+
+      {/* FABs */}
+      <div className="fixed bottom-5 right-5 z-50 flex flex-col gap-2.5">
+        <a href="https://wa.me/263783574677?text=Hello%20Margcha%20Shopfitting" target="_blank" rel="noopener noreferrer"
+          className="w-12 h-12 rounded-full bg-green-500 text-white flex items-center justify-center shadow-elevated hover:bg-green-600 active:scale-95 transition-all">
+          <IoLogoWhatsapp size={22} />
+        </a>
+        <a href="tel:+263783574677"
+          className="w-12 h-12 rounded-full bg-maroon-700 text-white flex items-center justify-center shadow-elevated hover:bg-maroon-800 active:scale-95 transition-all">
+          <Phone size={18} weight="bold" />
+        </a>
       </div>
     </section>
   );
 };
 
-const HomePage = () => {
-  const navigate = useNavigate();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [activeTestimonial, setActiveTestimonial] = useState(0);
-  const [isSticky, setIsSticky] = useState(false);
+/* ─── Why Choose Us ─── */
+const whyItems = [
+  { icon: Medal, title: 'Quality', desc: 'Premium materials and craftsmanship in every project' },
+  { icon: Clock, title: 'Timeliness', desc: 'On-time project delivery, every time' },
+  { icon: GearSix, title: 'Expertise', desc: 'Skilled professionals with years of experience' },
+  { icon: CreditCard, title: 'Flexible', desc: 'Convenient payment terms available' },
+];
 
-  // Handle scroll for sticky header
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 100) {
-        setIsSticky(true);
-      } else {
-        setIsSticky(false);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  // Animation variants
-  const fadeInUp = {
-    initial: { opacity: 0, y: 60 },
-    animate: { opacity: 1, y: 0 },
-    transition: { duration: 0.6 },
-  };
-
-  // Testimonials data
-  const testimonials = [
-    {
-      name: "Sarah Johnson",
-      company: "Elite Retail Group",
-      text: "Margcha transformed our retail space with exceptional aluminum work. The quality and attention to detail exceeded our expectations.",
-      rating: 5,
-    },
-    {
-      name: "David Mutendera",
-      company: "Premier Properties",
-      text: "The payment plan made our large office renovation project manageable. Professional work delivered on time and budget.",
-      rating: 5,
-    },
-    {
-      name: "Rachel Moyo",
-      company: "Stylish Boutiques Ltd",
-      text: "From concept to completion, the Margcha team provided outstanding service and craftsmanship for our chain of stores.",
-      rating: 5,
-    },
-  ];
-
-  return (
-    <div className="relative min-h-screen">
-      {/* Mobile Navigation Menu */}
-      <div
-        className={`fixed inset-0 bg-black/90 z-50 transform transition-transform duration-300 ${
-          isMenuOpen ? "translate-x-0" : "translate-x-full"
-        }`}
-      >
-        <div className="p-6">
-          <div className="flex justify-between items-center mb-8">
-            <div className="flex items-center">
-              <div className="text-maroon-400 mr-2">
-                <svg
-                  width="30"
-                  height="30"
-                  viewBox="0 0 100 100"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M20 80L50 20L80 80H60L50 60L40 80H20Z"
-                    fill="#D1D1D1"
-                  />
-                </svg>
-              </div>
-              <span className="text-xl font-bold text-white">Margcha</span>
+const WhySection = () => (
+  <section className="section-padding bg-white dark:bg-gray-950 relative overflow-hidden">
+    {/* Subtle bg image */}
+    <div className="absolute inset-0 opacity-[0.03]">
+      <img src="/14.jpg" alt="" className="w-full h-full object-cover" loading="lazy" />
+    </div>
+    <div className="container-width relative z-10">
+      <SectionHeader label="Why Us" title="Why Choose Margcha?"
+        subtitle={<>Our commitment to quality sets us apart. See our <Link to="/projects" className="hyperlink">completed projects</Link> and <Link to="/about" className="hyperlink">our story</Link>.</>} />
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-5">
+        {whyItems.map(({ icon: Icon, title, desc }, i) => (
+          <motion.div key={title} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }} transition={{ delay: i * 0.1 }}
+            className="glass-light p-5 md:p-6 text-center group cursor-pointer hover:shadow-card-hover transition-all duration-500 active:scale-[0.98]">
+            <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-maroon-50 dark:bg-maroon-900/20 flex items-center justify-center mx-auto mb-4 group-hover:bg-maroon-100 transition-colors">
+              <Icon size={24} weight="duotone" className="text-maroon-600" />
             </div>
-            <button
-              onClick={() => setIsMenuOpen(false)}
-              className="text-white p-2"
-            >
-              <X size={24} />
-            </button>
-          </div>
-
-          <nav>
-            <ul className="space-y-6">
-              {["Home", "About Us", "Services", "Projects", "Contact"].map(
-                (item) => (
-                  <li key={item} className="border-b border-gray-800 pb-4">
-                    <a
-                      href="#"
-                      onClick={() => {
-                        setIsMenuOpen(false);
-                        navigate(
-                          item === "Home"
-                            ? "/"
-                            : `/${item.toLowerCase().replace(" ", "-")}`
-                        );
-                      }}
-                      className="flex justify-between items-center text-white text-xl"
-                    >
-                      {item}
-                      <ChevronRight size={20} />
-                    </a>
-                  </li>
-                )
-              )}
-            </ul>
-          </nav>
-
-          <div className="mt-12 pt-6 border-t border-gray-800">
-            <h4 className="text-lg font-semibold text-white mb-4">
-              Contact Us
-            </h4>
-            <div className="space-y-4">
-              <a
-                href="tel:+263783574677"
-                className="flex items-center text-gray-300 hover:text-white"
-              >
-                <Phone size={18} className="mr-3" />
-                <span>+263 78 357 4677</span>
-              </a>
-              <a
-                href="mailto:sales@margchashopfitting.com"
-                className="flex items-center text-gray-300 hover:text-white"
-              >
-                <Mail size={18} className="mr-3" />
-                <span>sales@margchashopfitting.com</span>
-              </a>
-            </div>
-
-            <div className="mt-8 flex space-x-4">
-              <a
-                href="#"
-                className="bg-maroon-600 text-white p-2 rounded-full hover:bg-maroon-700"
-              >
-                <Facebook size={20} />
-              </a>
-              <a
-                href="#"
-                className="bg-maroon-600 text-white p-2 rounded-full hover:bg-maroon-700"
-              >
-                <Instagram size={20} />
-              </a>
-              <a
-                href="#"
-                className="bg-maroon-600 text-white p-2 rounded-full hover:bg-maroon-700"
-              >
-                <Twitter size={20} />
-              </a>
-              <a
-                href="#"
-                className="bg-maroon-600 text-white p-2 rounded-full hover:bg-maroon-700"
-              >
-                <Linkedin size={20} />
-              </a>
-            </div>
-          </div>
-        </div>
+            <h3 className="font-heading text-h4 text-gray-900 dark:text-white mb-1">{title}</h3>
+            <p className="text-body-sm text-gray-500 dark:text-gray-400">{desc}</p>
+          </motion.div>
+        ))}
       </div>
+    </div>
+  </section>
+);
 
-      {/* Header - Responsive and Sticky */}
-      <header
-        className={`fixed w-full z-40 transition-all duration-300 ${
-          isSticky ? "bg-gray-900/95 shadow-lg py-2" : "bg-transparent py-4"
-        }`}
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center">
-            {/* Logo */}
-            <div className="flex items-center">
-              <div className="text-maroon-400 mr-2">
-                <svg
-                  width="30"
-                  height="30"
-                  viewBox="0 0 100 100"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M20 80L50 20L80 80H60L50 60L40 80H20Z"
-                    fill={isSticky ? "#D1D1D1" : "#FFFFFF"}
-                  />
-                </svg>
+/* ─── Product Showcase — cards with faded image transitions ─── */
+const products = [
+  { title: 'Aluminium Windows', desc: 'Energy-efficient, stylish windows for any architectural style.', image: '/window.jpg', link: '/services' },
+  { title: 'Folding Doors', desc: 'Space-saving doors creating seamless indoor-outdoor transitions.', image: '/door2.jpg', link: '/services' },
+  { title: 'Custom Shopfitting', desc: 'Bespoke solutions for retail and commercial environments.', image: '/custom.jpg', link: '/projects' },
+];
+
+const ProductShowcase = () => (
+  <section className="section-padding relative overflow-hidden">
+    {/* Blended bg */}
+    <div className="absolute inset-0">
+      <img src="/13.jpg" alt="" className="w-full h-full object-cover" loading="lazy" />
+      <div className="absolute inset-0 bg-gray-50/95 dark:bg-gray-900/95" />
+    </div>
+    <div className="container-width relative z-10">
+      <SectionHeader label="Our Products" title="Premium Solutions"
+        subtitle={<>Exceptional quality <Link to="/services" className="hyperlink">aluminium solutions</Link> for commercial and residential spaces.</>} />
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-7">
+        {products.map((product, i) => (
+          <motion.div key={product.title} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }} transition={{ delay: i * 0.15 }}
+            className="card overflow-hidden group cursor-pointer active:scale-[0.98] transition-transform">
+            <Link to={product.link}>
+              {/* Image with fade-out bottom */}
+              <div className="relative overflow-hidden">
+                <OptimizedImage src={product.image} alt={product.title}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  wrapperClassName="h-48 md:h-56" />
+                {/* Gradient fade from image into card body */}
+                <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white to-transparent dark:from-gray-950 z-10" />
+                {/* Hover overlay */}
+                <div className="absolute inset-0 bg-maroon-900/0 group-hover:bg-maroon-900/20 transition-colors duration-500 z-5" />
               </div>
-              <div>
-                <span
-                  className={`text-xl font-bold ${
-                    isSticky ? "text-white" : "text-white"
-                  }`}
-                >
-                  Margcha
+              <div className="p-5 md:p-6 -mt-3 relative z-10">
+                <h3 className="font-heading text-h4 text-gray-900 dark:text-white mb-2 group-hover:text-maroon-700 dark:group-hover:text-maroon-400 transition-colors">{product.title}</h3>
+                <p className="text-body-sm text-gray-500 dark:text-gray-400 mb-3">{product.desc}</p>
+                <span className="inline-flex items-center text-maroon-600 text-body-sm font-medium group-hover:gap-2 gap-1 transition-all">
+                  <CheckCircle size={15} weight="fill" /> Learn More <ArrowUpRight size={13} weight="bold" />
                 </span>
               </div>
-            </div>
-
-            {/* Desktop Navigation */}
-            <nav className="hidden md:flex space-x-6">
-              {["Home", "About", "Services", "Projects", "Contact"].map(
-                (item) => (
-                  <a
-                    key={item}
-                    href="#"
-                    onClick={() =>
-                      navigate(item === "Home" ? "/" : `/${item.toLowerCase()}`)
-                    }
-                    className={`font-medium hover:text-maroon-400 transition-colors ${
-                      isSticky ? "text-gray-300" : "text-white"
-                    }`}
-                  >
-                    {item}
-                  </a>
-                )
-              )}
-            </nav>
-
-            {/* Mobile Menu Button */}
-            <div className="flex items-center space-x-4">
-              <a
-                href="tel:+263783574677"
-                className={`hidden sm:flex items-center ${
-                  isSticky ? "text-gray-300" : "text-white"
-                } hover:text-maroon-400`}
-              >
-                <Phone size={18} className="mr-2" />
-                <span className="font-medium">Call Us</span>
-              </a>
-
-              <button
-                onClick={() => setIsMenuOpen(true)}
-                className={`p-2 rounded-lg ${
-                  isSticky
-                    ? "text-white hover:bg-gray-700"
-                    : "text-white hover:bg-white/10"
-                } md:hidden`}
-              >
-                <Menu size={24} />
-              </button>
-
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => navigate("/contact")}
-                className="hidden md:flex px-4 py-2 bg-maroon-600 hover:bg-maroon-700 text-white rounded-lg text-sm font-medium items-center gap-2"
-              >
-                <Mail size={16} />
-                Get Quote
-              </motion.button>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      {/* Hero Section */}
-      <EnhancedHeroSection />
-
-      {/* Hero Section - Enhanced for Mobile 
-      <motion.section 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="relative min-h-screen flex items-center pt-24 pb-16 md:pt-16 md:pb-12 bg-gradient-to-br from-gray-900 via-maroon-900 to-gray-900 overflow-hidden"
-      >
-
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute inset-0 bg-black/60 z-10"></div>
-          <motion.div 
-            initial={{ scale: 1.2, opacity: 0 }}
-            animate={{ scale: 1, opacity: 0.2 }}
-            transition={{ duration: 1.5 }}
-            className="absolute inset-0 z-0"
-          >
-            <img 
-              src="/home.jpg" 
-              alt="Background" 
-              className="w-full h-full object-cover"
-            />
+            </Link>
           </motion.div>
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent z-20"></div>
-        </div>
-        
-   
-        <div className="relative z-30 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-16 lg:py-24">
-          <div className="flex flex-col lg:flex-row items-center justify-between gap-8 md:gap-12">
+        ))}
+      </div>
+    </div>
+  </section>
+);
 
-            <div className="w-full lg:w-3/5 text-center lg:text-left">
-              <motion.div 
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-                className="mb-2 inline-block bg-maroon-600/80 px-4 py-1 rounded-full text-white text-sm font-medium"
-              >
-                Premier Aluminium Fabrication & Joinery
-              </motion.div>
-              
-              <motion.h1 
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-                className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 md:mb-6 leading-tight"
-              >
-                Crafting Excellence in
-                <span className="block text-maroon-400">Shopfitting Solutions</span>
-              </motion.h1>
-              
-              <motion.p 
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.4 }}
-                className="text-lg md:text-xl text-gray-300 mb-6 md:mb-8 max-w-3xl mx-auto lg:mx-0"
-              >
-                Specialized in premium Aluminium Fabrication and Joinery, delivering exceptional craftsmanship for your commercial spaces.
-              </motion.p>
-              
-              <motion.div 
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.6 }}
-                className="flex flex-col sm:flex-row justify-center lg:justify-start gap-4 mb-12 lg:mb-0"
-              >
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  onClick={() => navigate('/services')}
-                  whileTap={{ scale: 0.95 }}
-                  className="px-6 py-4 bg-maroon-600 hover:bg-maroon-700 text-white rounded-lg font-semibold flex items-center justify-center gap-2 shadow-lg"
-                >
-                  Our Services <ArrowRight size={20} />
-                </motion.button>
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => navigate('/projects')}
-                  className="px-6 py-4 bg-transparent border-2 border-white text-white rounded-lg font-semibold hover:bg-white/10 shadow-lg flex items-center justify-center"
-                >
-                  View Projects
-                </motion.button>
-              </motion.div>
-            </div>
-            
-  
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.8, duration: 0.5 }}
-              className="w-full max-w-sm lg:w-2/5"
-            >
-              <div className="bg-white rounded-2xl shadow-2xl overflow-hidden transform rotate-1 hover:rotate-0 transition-transform duration-300">
-                <div className="text-center bg-gradient-to-r from-maroon-800 to-maroon-900 text-white py-4 px-4 md:py-6">
-                  <h3 className="text-lg md:text-xl font-bold mb-1 md:mb-2">WE ARE</h3>
-                  <div className="space-y-1">
-                    <p className="text-xl md:text-2xl font-bold">TRUSTWORTHY</p>
-                    <p className="text-xl md:text-2xl font-bold">FLEXIBLE</p>
-                    <p className="text-lg md:text-xl font-bold">AFFORDABLE</p>
-                    <p className="text-xl md:text-2xl font-bold">ON POINT</p>
-                    <p className="text-xl md:text-2xl font-bold">& ON TIME</p>
-                  </div>
-                </div>
-                
-                <div className="p-4 md:p-6">
-                  <p className="font-bold text-gray-800 mb-4 text-center text-lg">
-                    Get it in <span className="text-maroon-700">3 Installments</span>
-                  </p>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-3 mb-6">
-                    <div className="bg-maroon-700 text-white p-3 rounded text-center">
-                      <p className="font-bold mb-1">Step 1</p>
-                      <p className="text-sm">Pay 60% initial deposit</p>
-                    </div>
-                    <div className="bg-maroon-700 text-white p-3 rounded text-center">
-                      <p className="font-bold mb-1">Step 2</p>
-                      <p className="text-sm">Pay 20% after 31 days</p>
-                    </div>
-                    <div className="bg-maroon-700 text-white p-3 rounded text-center">
-                      <p className="font-bold mb-1">Step 3</p>
-                      <p className="text-sm">Final 20% after 31 days</p>
-                    </div>
-                  </div>
-                  
-                  <motion.button
-                    whileHover={{ scale: 1.03 }}
-                    onClick={() => navigate('/contact')}
-                    whileTap={{ scale: 0.97 }}
-                    className="w-full px-4 py-3 bg-gradient-to-r from-maroon-600 to-maroon-700 hover:from-maroon-700 hover:to-maroon-800 text-white rounded-lg text-base md:text-lg font-medium transition-colors duration-300 flex items-center justify-center shadow-md"
-                  >
-                    <CreditCard size={18} className="mr-2" />
-                    Try our payment terms today
-                  </motion.button>
-                </div>
+/* ─── Features ─── */
+const features = [
+  { icon: Buildings, title: 'Custom Solutions', desc: 'Tailored approaches for your unique requirements' },
+  { icon: Hammer, title: 'Expert Craftsmanship', desc: 'Precision and attention to every detail' },
+  { icon: GearSix, title: 'Quality Materials', desc: 'Premium materials for lasting results' },
+  { icon: Users, title: 'Professional Team', desc: 'Experienced and dedicated specialists' },
+];
+
+const FeaturesSection = () => (
+  <section className="section-padding bg-white dark:bg-gray-950 relative overflow-hidden">
+    <div className="absolute inset-0 opacity-[0.02]">
+      <img src="/15.jpg" alt="" className="w-full h-full object-cover" loading="lazy" />
+    </div>
+    <div className="container-width relative z-10">
+      <SectionHeader label="Our Strengths" title="Why Margcha Shopfitting?"
+        subtitle={<>Years of experience and dedication. <Link to="/about" className="hyperlink">Read our story</Link> to learn how we deliver.</>} />
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-5">
+        {features.map(({ icon: Icon, title, desc }, i) => (
+          <Link key={title} to="/services">
+            <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }} transition={{ delay: i * 0.1 }}
+              className="p-5 md:p-6 rounded-2xl border border-gray-100 dark:border-gray-700 hover:border-maroon-100 hover:shadow-card transition-all duration-500 cursor-pointer active:scale-[0.98] group">
+              <div className="w-11 h-11 rounded-xl bg-maroon-50 dark:bg-maroon-900/20 flex items-center justify-center mb-4 group-hover:bg-maroon-100 transition-colors">
+                <Icon size={22} weight="duotone" className="text-maroon-600" />
               </div>
+              <h3 className="font-heading text-h4 text-gray-900 dark:text-white mb-1 group-hover:text-maroon-700 dark:group-hover:text-maroon-400 transition-colors">{title}</h3>
+              <p className="text-body-sm text-gray-500 dark:text-gray-400">{desc}</p>
             </motion.div>
+          </Link>
+        ))}
+      </div>
+    </div>
+  </section>
+);
+
+/* ─── Testimonials — premium redesign ─── */
+const testimonials = [
+  { name: 'Sarah Johnson', company: 'Elite Retail Group', text: 'Margcha transformed our retail space with exceptional aluminium work. The quality and attention to detail exceeded our expectations.', rating: 5, image: '/shopfront2.jpeg' },
+  { name: 'David Mutendera', company: 'Premier Properties', text: 'The payment plan made our large office renovation project manageable. Professional work delivered on time and budget.', rating: 5, image: '/14.jpg' },
+  { name: 'Rachel Moyo', company: 'Stylish Boutiques Ltd', text: 'From concept to completion, the Margcha team provided outstanding service and craftsmanship for our chain of stores.', rating: 5, image: '/shopfront3.jpeg' },
+];
+
+const TestimonialsSection = () => {
+  const [active, setActive] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => setActive((p) => (p + 1) % testimonials.length), 6000);
+    return () => clearInterval(timer);
+  }, []);
+
+  return (
+    <section className="section-padding relative overflow-hidden">
+      {/* Blended bg that shifts with testimonial */}
+      <div className="absolute inset-0">
+        {testimonials.map((t, i) => (
+          <div key={i} className={`absolute inset-0 transition-opacity duration-1000 ${i === active ? 'opacity-100' : 'opacity-0'}`}>
+            <img src={t.image} alt="" className="w-full h-full object-cover" loading="lazy" />
           </div>
-          
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.5, duration: 1, repeat: Infinity, repeatType: "reverse" }}
-            className="absolute bottom-4 md:bottom-8 left-1/2 transform -translate-x-1/2 text-white"
-          >
-            <ChevronDown size={32} />
-          </motion.div>
-        </div>
-      </motion.section>*/}
+        ))}
+        <div className="absolute inset-0 bg-maroon-950/85 backdrop-blur-sm" />
+      </div>
 
-      {/* Why Choose Us - New Mobile-Friendly Section */}
-      <section className="py-12 md:py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-8 md:mb-12"
-          >
-            <h2 className="text-2xl md:text-4xl font-bold text-gray-900 mb-4">
-              Why Choose <span className="text-maroon-700">Margcha</span>?
-            </h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Our commitment to quality and customer satisfaction sets us apart
-            </p>
-          </motion.div>
+      <div className="container-width relative z-10">
+        <SectionHeader light label="Testimonials" title="What Our Clients Say"
+          subtitle={<>Real feedback from our <Link to="/projects" className="text-maroon-200 hover:text-white underline decoration-maroon-300/50 underline-offset-2 transition-colors">completed projects</Link>.</>} />
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
-            {[
-              {
-                icon: <Award size={28} />,
-                title: "Quality",
-                description: "Premium materials and craftsmanship",
-              },
-              {
-                icon: <Clock size={28} />,
-                title: "Timeliness",
-                description: "On-time project delivery",
-              },
-              {
-                icon: <Cog size={28} />,
-                title: "Expertise",
-                description: "Skilled professionals",
-              },
-              {
-                icon: <CreditCard size={28} />,
-                title: "Flexible",
-                description: "Easy payment terms",
-              },
-            ].map((item, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className="bg-white p-4 md:p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 text-center"
-              >
-                <div className="text-maroon-600 mb-3 flex justify-center">
-                  {item.icon}
-                </div>
-                <h3 className="text-lg md:text-xl font-semibold text-gray-900 mb-1">
-                  {item.title}
-                </h3>
-                <p className="text-gray-600 text-sm md:text-base">
-                  {item.description}
-                </p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Product Showcase Section - Mobile-Enhanced */}
-      <section className="py-12 md:py-16 bg-gray-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-8 md:mb-12"
-          >
-            <h2 className="text-2xl md:text-4xl font-bold text-gray-900 mb-4">
-              Our Premium Products
-            </h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Exceptional quality aluminum solutions for your commercial and
-              residential spaces
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
-            {[
-              {
-                title: "Aluminum Windows",
-                description:
-                  "Energy-efficient and stylish windows suitable for any architectural style",
-                image: "/window.jpg",
-              },
-              {
-                title: "Folding Doors",
-                description:
-                  "Space-saving folding doors that create seamless indoor-outdoor transitions",
-                image: "/door2.jpg",
-              },
-              {
-                title: "Custom Shopfitting",
-                description:
-                  "Bespoke solutions tailored for retail and commercial environments",
-                image: "/custom.jpg",
-              },
-            ].map((product, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.2 }}
-                className="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 group"
-              >
-                <div className="relative overflow-hidden h-48 md:h-56">
-                  <img
-                    src={product.image}
-                    alt={product.title}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-maroon-900/80 to-transparent opacity-100 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
-                    <div className="p-4">
-                      <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        onClick={() => navigate("/projects")}
-                        whileTap={{ scale: 0.95 }}
-                        className="px-4 py-2 bg-white text-maroon-700 rounded-md text-sm font-medium flex items-center gap-2"
-                      >
-                        Learn More <ArrowUpRight size={16} />
-                      </motion.button>
+        <div className="max-w-4xl mx-auto">
+          <div className="overflow-hidden">
+            <div className="flex transition-transform duration-700 ease-out" style={{ transform: `translateX(-${active * 100}%)` }}>
+              {testimonials.map((t, i) => (
+                <div key={i} className="min-w-full px-2 md:px-4">
+                  <div className="glass-dark p-8 md:p-12 text-center relative">
+                    <Quotes size={48} weight="fill" className="text-maroon-400/30 mx-auto mb-4" />
+                    <div className="flex justify-center gap-1 mb-5">
+                      {Array.from({ length: 5 }).map((_, j) => (
+                        <Star key={j} size={20} weight="fill" className={j < t.rating ? 'text-yellow-400' : 'text-gray-600'} />
+                      ))}
                     </div>
-                  </div>
-                </div>
-                <div className="p-4 md:p-5">
-                  <h3 className="text-lg md:text-xl font-semibold text-gray-900 mb-2">
-                    {product.title}
-                  </h3>
-                  <p className="text-gray-600 mb-4 text-sm md:text-base">
-                    {product.description}
-                  </p>
-                  <div className="flex items-center text-maroon-600 text-sm">
-                    <CheckCircle size={16} className="mr-2" />
-                    <span>Quality Guaranteed</span>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Features Section - Mobile Optimized */}
-      <section className="py-12 md:py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-8 md:mb-16"
-          >
-            <h2 className="text-2xl md:text-4xl font-bold text-gray-900 mb-4">
-              Why Choose Margcha Shopfitting?
-            </h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              With years of experience and dedication to quality, we bring your
-              vision to life through expert craftsmanship
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
-            {[
-              {
-                icon: <Building2 size={28} />,
-                title: "Custom Solutions",
-                description: "Tailored approaches for your unique requirements",
-              },
-              {
-                icon: <Hammer size={28} />,
-                title: "Expert Craftsmanship",
-                description: "Precision and attention to every detail",
-              },
-              {
-                icon: <Cog size={28} />,
-                title: "Quality Materials",
-                description: "Premium materials for lasting results",
-              },
-              {
-                icon: <Award size={28} />,
-                title: "Professional Team",
-                description: "Experienced and dedicated specialists",
-              },
-            ].map((feature, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.2 }}
-                className="bg-white p-4 md:p-6 rounded-xl shadow hover:shadow-lg transition-shadow duration-300 border border-gray-100"
-              >
-                <div className="text-maroon-600 mb-3 md:mb-4">
-                  {feature.icon}
-                </div>
-                <h3 className="text-lg md:text-xl font-semibold text-gray-900 mb-1 md:mb-2">
-                  {feature.title}
-                </h3>
-                <p className="text-gray-600 text-sm md:text-base">
-                  {feature.description}
-                </p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials - New Mobile-First Section */}
-      <section className="py-12 md:py-16 bg-gray-50 overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-8 md:mb-12"
-          >
-            <h2 className="text-2xl md:text-4xl font-bold text-gray-900 mb-4">
-              What Our Clients Say
-            </h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Don't just take our word for it - hear from our satisfied
-              customers
-            </p>
-          </motion.div>
-
-          <div className="relative">
-            <div className="overflow-hidden">
-              <div
-                className="flex transition-transform duration-500 ease-in-out"
-                style={{
-                  transform: `translateX(-${activeTestimonial * 100}%)`,
-                }}
-              >
-                {testimonials.map((testimonial, index) => (
-                  <div key={index} className="min-w-full px-4">
-                    <div className="bg-white rounded-xl shadow-lg p-6 md:p-8">
-                      <div className="flex items-center justify-center mb-1">
-                        {Array.from({ length: 5 }).map((_, i) => (
-                          <Star
-                            key={i}
-                            size={18}
-                            className={
-                              i < testimonial.rating
-                                ? "text-yellow-500 fill-yellow-500"
-                                : "text-gray-300"
-                            }
-                          />
-                        ))}
+                    <p className="text-lg md:text-xl text-white/90 italic leading-relaxed mb-8 max-w-2xl mx-auto">
+                      "{t.text}"
+                    </p>
+                    <div className="flex items-center justify-center gap-4">
+                      <div className="w-12 h-12 rounded-full overflow-hidden ring-2 ring-white/20">
+                        <img src={t.image} alt={t.name} className="w-full h-full object-cover" loading="lazy" />
                       </div>
-                      <p className="text-gray-700 text-lg mb-6 text-center italic">
-                        "{testimonial.text}"
-                      </p>
-                      <div className="text-center">
-                        <h4 className="font-semibold text-gray-900">
-                          {testimonial.name}
-                        </h4>
-                        <p className="text-gray-600 text-sm">
-                          {testimonial.company}
-                        </p>
+                      <div className="text-left">
+                        <p className="font-heading font-semibold text-white">{t.name}</p>
+                        <p className="text-body-sm text-white/50">{t.company}</p>
                       </div>
                     </div>
                   </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="flex justify-center mt-6 gap-2">
-              {testimonials.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setActiveTestimonial(index)}
-                  className={`w-3 h-3 rounded-full transition-colors duration-300 ${
-                    activeTestimonial === index
-                      ? "bg-maroon-600"
-                      : "bg-gray-300"
-                  }`}
-                  aria-label={`Go to testimonial ${index + 1}`}
-                />
+                </div>
               ))}
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* Payment Plan Section - Mobile Enhanced */}
-      <section className="py-12 md:py-16 bg-gray-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-8 md:mb-12"
-          >
-            <h2 className="text-2xl md:text-4xl font-bold text-gray-900 mb-4">
-              Flexible Payment Options
-            </h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Get your dream aluminum solutions with our convenient installment
-              plan
-            </p>
-          </motion.div>
-          <div className="flex flex-col md:flex-row items-center justify-center bg-white rounded-lg shadow-xl overflow-hidden">
-            <div className="w-full md:w-2/5 bg-maroon-800 text-white p-6 md:p-8 flex items-center justify-center">
-              <div className="text-center">
-                <h3 className="text-2xl md:text-3xl font-bold mb-2">
-                  IT'S AFFORDABLE!
-                </h3>
-                <p className="text-lg md:text-xl mb-4">
-                  Get it in 3 Installments
-                </p>
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  onClick={() => navigate("/contact")}
-                  whileTap={{ scale: 0.95 }}
-                  className="px-5 py-2 md:px-6 md:py-3 bg-white text-maroon-800 rounded-lg font-semibold hover:bg-gray-100 transition-colors duration-300"
-                >
-                  Get Started Today
-                </motion.button>
-              </div>
-            </div>
-            <div className="w-full md:w-3/5 p-6 md:p-8">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-                <div className="text-center">
-                  <div className="bg-maroon-100 text-maroon-800 rounded-full w-10 h-10 md:w-12 md:h-12 flex items-center justify-center mx-auto mb-3 md:mb-4">
-                    <span className="font-bold text-base md:text-lg">1</span>
-                  </div>
-                  <h4 className="font-bold text-gray-900 mb-1 md:mb-2">
-                    Initial Deposit
-                  </h4>
-                  <p className="text-gray-600 mb-2 text-sm md:text-base">
-                    Pay 60% and get your products delivered and installed
-                  </p>
-                  <p className="text-maroon-700 font-bold">Day 1</p>
-                </div>
-                <div className="text-center">
-                  <div className="bg-maroon-100 text-maroon-800 rounded-full w-10 h-10 md:w-12 md:h-12 flex items-center justify-center mx-auto mb-3 md:mb-4">
-                    <span className="font-bold text-base md:text-lg">2</span>
-                  </div>
-                  <h4 className="font-bold text-gray-900 mb-1 md:mb-2">
-                    Second Payment
-                  </h4>
-                  <p className="text-gray-600 mb-2 text-sm md:text-base">
-                    Settle 20% of the total cost after first month
-                  </p>
-                  <p className="text-maroon-700 font-bold">Day 31</p>
-                </div>
-                <div className="text-center">
-                  <div className="bg-maroon-100 text-maroon-800 rounded-full w-10 h-10 md:w-12 md:h-12 flex items-center justify-center mx-auto mb-3 md:mb-4">
-                    <span className="font-bold text-base md:text-lg">3</span>
-                  </div>
-                  <h4 className="font-bold text-gray-900 mb-1 md:mb-2">
-                    Final Payment
-                  </h4>
-                  <p className="text-gray-600 mb-2 text-sm md:text-base">
-                    Complete the remaining 20% after second month
-                  </p>
-                  <p className="text-maroon-700 font-bold">Day 62</p>
-                </div>
-              </div>
-            </div>
+          <div className="flex justify-center gap-2 mt-6">
+            {testimonials.map((_, i) => (
+              <button key={i} onClick={() => setActive(i)}
+                className={`h-2 rounded-full transition-all duration-500 ${active === i ? 'w-10 bg-white' : 'w-2 bg-white/30'}`} />
+            ))}
           </div>
         </div>
-      </section>
-
-      {/* CTA Section - Mobile Optimized */}
-      <motion.section
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        className="py-12 md:py-20 bg-gradient-to-r from-maroon-800 to-gray-900 text-white"
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-2xl md:text-4xl font-bold mb-4 md:mb-6">
-            Ready to Transform Your Space?
-          </h2>
-          <p className="text-base md:text-lg text-gray-300 mb-6 md:mb-8 max-w-2xl mx-auto">
-            Let's discuss your project and create something extraordinary
-            together.
-          </p>
-          <div className="flex flex-col sm:flex-row justify-center gap-4 items-center">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => navigate("/contact")}
-              className="w-full sm:w-auto px-6 py-3 bg-white text-maroon-800 rounded-lg font-semibold hover:bg-gray-100 transition-colors duration-300 flex items-center justify-center gap-2"
-            >
-              <Phone size={18} />
-              Contact Us Today
-            </motion.button>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              onClick={() => navigate("/contact")}
-              whileTap={{ scale: 0.95 }}
-              className="w-full sm:w-auto px-6 py-3 bg-transparent border-2 border-white text-white rounded-lg font-semibold hover:bg-white/10 flex items-center justify-center gap-2"
-            >
-              <Calendar size={18} />
-              Schedule Consultation
-            </motion.button>
-          </div>
-        </div>
-      </motion.section>
-
-      {/* Footer - Mobile Optimized */}
-      <footer className="bg-gray-900 text-white py-10 md:py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
-            <div>
-              <div className="flex items-center mb-4">
-                <div className="text-maroon-400 mr-2">
-                  <svg
-                    width="30"
-                    height="30"
-                    viewBox="0 0 100 100"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M20 80L50 20L80 80H60L50 60L40 80H20Z"
-                      fill="#D1D1D1"
-                    />
-                  </svg>
-                </div>
-                <div>
-                  <span className="text-xl font-bold">Margcha</span>
-                </div>
-              </div>
-              <p className="text-gray-400 mb-4 text-sm">
-                Premium aluminum fabrication and joinery solutions for
-                commercial and residential spaces.
-              </p>
-              <div className="flex space-x-4">
-                <a href="#" className="text-gray-400 hover:text-white">
-                  <Facebook size={18} />
-                </a>
-                <a href="#" className="text-gray-400 hover:text-white">
-                  <Instagram size={18} />
-                </a>
-                <a href="#" className="text-gray-400 hover:text-white">
-                  <Twitter size={18} />
-                </a>
-                <a href="#" className="text-gray-400 hover:text-white">
-                  <Linkedin size={18} />
-                </a>
-              </div>
-            </div>
-            <div>
-              <h3 className="text-lg font-bold mb-3">Quick Links</h3>
-              <ul className="space-y-2">
-                {[
-                  "Home",
-                  "About Us",
-                  "Services",
-                  "Projects",
-                  "Testimonials",
-                ].map((item) => (
-                  <li key={item}>
-                    <a
-                      href="#"
-                      className="text-gray-400 hover:text-white transition-colors text-sm"
-                    >
-                      {item}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-lg font-bold mb-3">Our Services</h3>
-              <ul className="space-y-2">
-                {[
-                  "Aluminum Windows",
-                  "Folding Doors",
-                  "Shop Fronts",
-                  "Office Partitions",
-                  "Custom Solutions",
-                ].map((item) => (
-                  <li key={item}>
-                    <a
-                      href="#"
-                      className="text-gray-400 hover:text-white transition-colors text-sm"
-                    >
-                      {item}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-lg font-bold mb-3">Contact Information</h3>
-              <ul className="space-y-3">
-                <li className="flex items-start">
-                  <MapPin
-                    size={16}
-                    className="mr-2 mt-1 text-maroon-400 flex-shrink-0"
-                  />
-                  <span className="text-gray-400 text-sm">
-                    NO:70 Mutare Road, Cnr Steven Drive, Colonnade Building,
-                    Office Suite 12, First floor, Msasa, Harare
-                  </span>
-                </li>
-                <li className="flex items-center">
-                  <Phone
-                    size={16}
-                    className="mr-2 text-maroon-400 flex-shrink-0"
-                  />
-                  <span className="text-gray-400 text-sm">
-                    +263 78 357 4677
-                  </span>
-                </li>
-                <li className="flex items-center">
-                  <Phone
-                    size={16}
-                    className="mr-2 text-maroon-400 flex-shrink-0"
-                  />
-                  <span className="text-gray-400 text-sm">
-                    +263 71 427 3307
-                  </span>
-                </li>
-                <li className="flex items-center">
-                  <Mail
-                    size={16}
-                    className="mr-2 text-maroon-400 flex-shrink-0"
-                  />
-                  <span className="text-gray-400 text-sm">
-                    sales@margchashopfitting.com
-                  </span>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div className="border-t border-gray-800 mt-8 pt-6 text-center text-gray-500">
-            <p className="text-sm">
-              &copy; {new Date().getFullYear()} Margcha Shopfitting. All rights
-              reserved.
-            </p>
-          </div>
-        </div>
-        <div className="mt-4 text-center">
-          <Typography variant="body2" className="!text-blue-100">
-            Developed by{" "}
-            <a
-              href="https://zettabyte.co.zw"
-              className="!text-maroon-400 hover:!text-white !transition-colors"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Zettabyte
-            </a>
-          </Typography>
-        </div>
-      </footer>
-    </div>
+      </div>
+    </section>
   );
 };
+
+/* ─── Payment Plan ─── */
+const PaymentSection = () => (
+  <section className="section-padding bg-white dark:bg-gray-950 relative overflow-hidden">
+    <div className="absolute inset-0 opacity-[0.03]">
+      <img src="/16.jpg" alt="" className="w-full h-full object-cover" loading="lazy" />
+    </div>
+    <div className="container-width relative z-10">
+      <div className="card-elevated overflow-hidden flex flex-col lg:flex-row">
+        {/* Left — with blended bg */}
+        <div className="lg:w-2/5 relative overflow-hidden">
+          <img src="/door.jpg" alt="" className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
+          <div className="absolute inset-0 gradient-maroon opacity-80" />
+          <div className="relative z-10 p-8 md:p-10 flex items-center justify-center min-h-[240px]">
+            <div className="text-center text-white">
+              <Sparkle size={36} weight="fill" className="text-yellow-300 mx-auto mb-4" />
+              <h3 className="font-heading text-h2 font-bold mb-2">It's Affordable!</h3>
+              <p className="text-lg text-maroon-100 mb-6">Get it in 3 easy installments</p>
+              <Link to="/contact" className="inline-flex items-center gap-2 px-6 py-3 bg-white text-maroon-800 rounded-xl font-heading font-semibold hover:bg-gray-100 transition-colors active:scale-[0.97]">
+                Get Started <ArrowRight size={16} weight="bold" />
+              </Link>
+            </div>
+          </div>
+        </div>
+        <div className="lg:w-3/5 p-8 md:p-10">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[
+              { step: '1', title: 'Initial Deposit', desc: 'Pay 60% and get your products delivered', day: 'Day 1' },
+              { step: '2', title: 'Second Payment', desc: 'Settle 20% of the total cost', day: 'Day 31' },
+              { step: '3', title: 'Final Payment', desc: 'Complete the remaining 20%', day: 'Day 62' },
+            ].map((item) => (
+              <Link key={item.step} to="/contact" className="text-center group cursor-pointer active:scale-[0.97] transition-transform">
+                <div className="w-12 h-12 rounded-2xl bg-maroon-50 dark:bg-maroon-900/20 text-maroon-700 dark:text-maroon-400 flex items-center justify-center mx-auto mb-3 font-heading font-bold text-lg group-hover:bg-maroon-100 transition-colors">
+                  {item.step}
+                </div>
+                <h4 className="font-heading font-semibold text-gray-900 dark:text-white mb-1 group-hover:text-maroon-700 dark:group-hover:text-maroon-400 transition-colors">{item.title}</h4>
+                <p className="text-body-sm text-gray-500 dark:text-gray-400 mb-2">{item.desc}</p>
+                <span className="text-body-sm font-semibold text-maroon-700 dark:text-maroon-400">{item.day}</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+);
+
+/* ─── CTA ─── */
+const CTASection = () => (
+  <section className="section-padding relative overflow-hidden">
+    <div className="absolute inset-0">
+      <img src="/12.jpg" alt="" className="w-full h-full object-cover" loading="lazy" />
+      <div className="absolute inset-0 gradient-maroon opacity-80" />
+    </div>
+    <div className="container-width relative z-10 text-center text-white">
+      <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+        <h2 className="font-heading text-h1 md:text-display font-bold mb-4 text-balance">
+          Ready to Transform Your Space?
+        </h2>
+        <p className="text-body-lg text-gray-300 max-w-2xl mx-auto mb-8">
+          Let's discuss your project. <Link to="/about" className="text-maroon-200 hover:text-white underline decoration-maroon-300/50 underline-offset-2 transition-colors">Learn about our process</Link> or get started today.
+        </p>
+        <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
+          <Link to="/contact" className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white text-maroon-800 rounded-2xl font-heading font-semibold hover:bg-gray-100 transition-colors shadow-lg active:scale-[0.97]">
+            <Phone size={18} weight="bold" />
+            Contact Us Today
+          </Link>
+          <Link to="/services" className="btn-ghost !py-4 !px-8 !rounded-2xl">
+            Explore Services
+          </Link>
+        </div>
+      </motion.div>
+    </div>
+  </section>
+);
+
+/* ─── Main ─── */
+const HomePage = () => (
+  <>
+    <HeroSection />
+    <WhySection />
+    <ProductShowcase />
+    <FeaturesSection />
+    <TestimonialsSection />
+    <PaymentSection />
+    <CTASection />
+  </>
+);
 
 export default HomePage;

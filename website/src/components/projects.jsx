@@ -1,472 +1,602 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  ArrowRight, 
-  CheckCircle, 
-  Eye, 
-  Filter, 
+import { Link } from 'react-router-dom';
+import {
+  ArrowRight,
+  CheckCircle,
+  Eye,
+  Funnel,
   Clock,
   Star,
   X,
   MapPin,
-  Calendar,
-  ChevronLeft,
-  ChevronRight,
-  Share2,
+  CalendarBlank,
+  CaretLeft,
+  CaretRight,
+  ShareNetwork,
   Heart,
-  Menu,
-  MessageSquare
-} from 'lucide-react';
+  ChatCircle,
+} from '@phosphor-icons/react';
+import OptimizedImage from './shared/OptimizedImage';
+import SectionHeader from './shared/SectionHeader';
 
-const ProjectsPage = () => {
-  const [filter, setFilter] = useState('all');
-  const [projects, setProjects] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [selectedProject, setSelectedProject] = useState(null);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [filterMenuOpen, setFilterMenuOpen] = useState(false);
-  const [favoriteProjects, setFavoriteProjects] = useState([]);
-  const navigate = useNavigate();
-
-// Mock projects data - in a real implementation this would come from an API
-  const allProjects = [
-    {
-      id: 1,
-      title: "Premium Retail Shopfront",
-      category: "shopfront",
-      location: "Harare CBD",
-      description: "Custom aluminum shopfront with large display windows and automatic sliding doors for a high-end clothing retailer.",
-      completionDate: "January 2024",
-      features: ["Frameless Glass Display", "Automated Doors", "LED Integration", "Custom Signage"],
-      images: ["/shopfront2.jpeg", "/shopfront3.jpeg", "/shopfront1.jpeg"],
-      testimonial: {
-        text: "Margcha transformed our retail space with their exceptional craftsmanship. The shopfront has significantly increased foot traffic and customer engagement.",
-        author: "Fashion Retailer, Harare"
-      }
+/* ─── Data ─── */
+const allProjects = [
+  {
+    id: 1,
+    title: 'Premium Retail Shopfront',
+    category: 'shopfront',
+    location: 'Harare CBD',
+    description:
+      'Custom aluminum shopfront with large display windows and automatic sliding doors for a high-end clothing retailer.',
+    completionDate: 'January 2024',
+    features: ['Frameless Glass Display', 'Automated Doors', 'LED Integration', 'Custom Signage'],
+    images: ['/shopfront2.jpeg', '/shopfront3.jpeg', '/shopfront1.jpeg'],
+    testimonial: {
+      text: 'Margcha transformed our retail space with exceptional craftsmanship. The shopfront has significantly increased foot traffic.',
+      author: 'Fashion Retailer, Harare',
     },
-    {
-      id: 2,
-      title: "Office Complex Partitioning",
-      category: "partition",
-      location: "Msasa Business Park",
-      description: "Complete office partitioning solution with aluminum and glass divisions, creating an open yet structured workspace.",
-      completionDate: "March 2024",
-      features: ["Sound-Proof Glass", "Modular Design", "Integrated Blinds", "Custom Door Systems"],
-      images: ["/14.jpg", "/15.jpg", "/6.jpg"],
-      testimonial: {
-        text: "The partitioning system designed by Margcha perfectly balances privacy and openness. The quality of materials and installation exceeded our expectations.",
-        author: "Corporate Services Manager"
-      }
+  },
+  {
+    id: 2,
+    title: 'Office Complex Partitioning',
+    category: 'partition',
+    location: 'Msasa Business Park',
+    description:
+      'Complete office partitioning solution with aluminum and glass divisions, creating an open yet structured workspace.',
+    completionDate: 'March 2024',
+    features: ['Sound-Proof Glass', 'Modular Design', 'Integrated Blinds', 'Custom Door Systems'],
+    images: ['/14.jpg', '/15.jpg', '/6.jpg'],
+    testimonial: {
+      text: 'The partitioning system perfectly balances privacy and openness. The quality exceeded our expectations.',
+      author: 'Corporate Services Manager',
     },
-    {
-      id: 3,
-      title: "Luxury Home Windows & Doors",
-      category: "residential",
-      location: "Borrowdale, Harare",
-      description: "Complete replacement of windows and doors with premium aluminum systems for improved security, insulation, and aesthetics.",
-      completionDate: "February 2024",
-      features: ["Thermal Break Technology", "Multi-Point Locking", "Custom Finishes", "UV Protection Glass"],
-      images: ["/16.jpg", "/1.jpg", "/5.jpg"],
-      testimonial: {
-        text: "The quality of workmanship and materials used by Margcha has transformed our home. The new windows and doors have improved both security and energy efficiency.",
-        author: "Homeowner, Borrowdale"
-      }
+  },
+  {
+    id: 3,
+    title: 'Luxury Home Windows & Doors',
+    category: 'residential',
+    location: 'Borrowdale, Harare',
+    description:
+      'Complete replacement with premium aluminum systems for improved security, insulation, and aesthetics.',
+    completionDate: 'February 2024',
+    features: ['Thermal Break Technology', 'Multi-Point Locking', 'Custom Finishes', 'UV Protection Glass'],
+    images: ['/16.jpg', '/1.jpg', '/5.jpg'],
+    testimonial: {
+      text: 'The new windows and doors have improved both security and energy efficiency. Outstanding quality.',
+      author: 'Homeowner, Borrowdale',
     },
-    {
-      id: 4,
-      title: "Banking Hall Renovation",
-      category: "commercial",
-      location: "Avondale, Harare",
-      description: "Complete renovation of banking hall with security glass partitions, custom counters, and aluminum framework throughout.",
-      completionDate: "April 2024",
-      features: ["Bulletproof Glass", "Secure Counter Systems", "Custom Branding Elements", "Queue Management Integration"],
-      images: ["/3.jpg", "/4.jpg", "/14.jpg"],
-      testimonial: {
-        text: "Margcha's attention to detail and ability to work within our security requirements was exceptional. The finished banking hall is both functional and aesthetically pleasing.",
-        author: "Bank Operations Director"
-      }
+  },
+  {
+    id: 4,
+    title: 'Banking Hall Renovation',
+    category: 'commercial',
+    location: 'Avondale, Harare',
+    description:
+      'Complete renovation with security glass partitions, custom counters, and aluminum framework.',
+    completionDate: 'April 2024',
+    features: ['Bulletproof Glass', 'Secure Counter Systems', 'Custom Branding', 'Queue Management'],
+    images: ['/3.jpg', '/4.jpg', '/14.jpg'],
+    testimonial: {
+      text: "Margcha's attention to detail and ability to work within our security requirements was exceptional.",
+      author: 'Bank Operations Director',
     },
-    {
-      id: 5,
-      title: "Restaurant Folding Doors",
-      category: "commercial",
-      location: "Sam Levy's Village, Harare",
-      description: "Installation of folding glass doors to create flexible indoor-outdoor dining space for an upscale restaurant.",
-      completionDate: "May 2024",
-      features: ["Weather-Resistant Design", "Smooth Operation System", "Custom Sizing", "Enhanced Sound Insulation"],
-      images: ["/vista1.jpeg", "/vista2.jpeg", "/vista3.jpeg"],
-      testimonial: {
-        text: "The folding doors have revolutionized our dining experience, allowing us to adapt to weather changes while maintaining a seamless connection to our outdoor space.",
-        author: "Restaurant Owner"
-      }
+  },
+  {
+    id: 5,
+    title: 'Restaurant Folding Doors',
+    category: 'commercial',
+    location: "Sam Levy's Village, Harare",
+    description:
+      'Installation of folding glass doors creating flexible indoor-outdoor dining space.',
+    completionDate: 'May 2024',
+    features: ['Weather-Resistant', 'Smooth Operation', 'Custom Sizing', 'Sound Insulation'],
+    images: ['/vista1.jpeg', '/vista3.jpeg'],
+    testimonial: {
+      text: 'The folding doors revolutionized our dining experience with seamless indoor-outdoor connection.',
+      author: 'Restaurant Owner',
     },
-    {
-      id: 6,
-      title: "Hotel Shower Enclosures",
-      category: "specialized",
-      location: "Victoria Falls",
-      description: "Custom shower enclosures for 35 premium hotel rooms, featuring frameless glass design and premium hardware.",
-      completionDate: "June 2024",
-      features: ["Frameless Design", "Anti-Scale Glass", "Premium Hardware", "Custom Etching"],
-      images: ["/showe1.jpeg", "/shower2.jpeg", "/shower3.jpeg"],
-      testimonial: {
-        text: "Margcha delivered exceptional quality shower enclosures that perfectly complement our luxury rooms. Their installation team was professional and efficient.",
-        author: "Hospitality Manager, Victoria Falls"
-      }
+  },
+  {
+    id: 6,
+    title: 'Hotel Shower Enclosures',
+    category: 'specialized',
+    location: 'Victoria Falls',
+    description:
+      'Custom frameless shower enclosures for 35 premium hotel rooms with premium hardware.',
+    completionDate: 'June 2024',
+    features: ['Frameless Design', 'Anti-Scale Glass', 'Premium Hardware', 'Custom Etching'],
+    images: ['/showe1.jpeg', '/shower2.jpeg', '/shower3.jpeg'],
+    testimonial: {
+      text: 'Exceptional quality shower enclosures that perfectly complement our luxury rooms.',
+      author: 'Hospitality Manager, Victoria Falls',
     },
-    {
-      id: 7,
-      title: "Kadoma Steel to Aluminum Conversion",
-      category: "residential",
-      location: "Kadoma",
-      description: "Complete conversion of outdated steel windows and doors to modern aluminum and glass systems, enhancing both aesthetics and functionality.",
-      completionDate: "July 2024",
-      features: ["Steel Removal & Replacement", "Energy Efficient Glass", "Modern Aluminum Frames", "Enhanced Security Features"],
-      images: ["/compo/1.jpeg", "/compo/2.jpeg", "/compo/3.jpeg", "/compo/4.jpeg", "/compo/5.jpeg", "/compo/6.jpeg"],
-      testimonial: {
-        text: "Margcha seamlessly converted our old steel fixtures to beautiful aluminum systems. The transformation has improved our property's appearance and security dramatically.",
-        author: "Property Owner, Kadoma"
-      }
+  },
+  {
+    id: 7,
+    title: 'Kadoma Steel to Aluminum Conversion',
+    category: 'residential',
+    location: 'Kadoma',
+    description:
+      'Complete conversion of outdated steel fixtures to modern aluminum and glass systems.',
+    completionDate: 'July 2024',
+    features: ['Steel Removal', 'Energy Efficient Glass', 'Modern Frames', 'Enhanced Security'],
+    images: [
+      '/compo/1.jpeg',
+      '/compo/2.jpeg',
+      '/compo/3.jpeg',
+      '/compo/4.jpeg',
+      '/compo/5.jpeg',
+      '/compo/6.jpeg',
+    ],
+    testimonial: {
+      text: 'Margcha seamlessly converted our old steel fixtures. The transformation is dramatic.',
+      author: 'Property Owner, Kadoma',
     },
-    {
-      id: 8,
-      title: "Zimbabwe Tourism Authority Security Installation",
-      category: "specialized",
-      location: "Harare",
-      description: "Installation of retractable security burglar bars for the Zimbabwe Tourism Authority offices, providing enhanced security without compromising aesthetics.",
-      completionDate: "August 2024",
-      features: ["Retractable Design", "High-Strength Materials", "Emergency Quick Release", "Powder-Coated Finish"],
-      images: ["/2/1.jpeg", "/2/2.jpeg", "/2/3.jpeg", "/2/4.jpeg", "/2/5.jpeg", "/2/6.jpeg", "/2/7.jpeg",],
-      testimonial: {
-        text: "The retractable burglar bars installed by Margcha provide the security we need while maintaining the professional appearance of our offices. Excellent workmanship.",
-        author: "Facilities Manager, ZTA"
-      }
+  },
+  {
+    id: 8,
+    title: 'ZTA Security Installation',
+    category: 'specialized',
+    location: 'Harare',
+    description:
+      'Retractable security burglar bars for Zimbabwe Tourism Authority offices.',
+    completionDate: 'August 2024',
+    features: ['Retractable Design', 'High-Strength Materials', 'Emergency Release', 'Powder-Coated'],
+    images: [
+      '/2/1.jpeg',
+      '/2/2.jpeg',
+      '/2/3.jpeg',
+      '/2/4.jpeg',
+      '/2/5.jpeg',
+      '/2/6.jpeg',
+      '/2/7.jpeg',
+    ],
+    testimonial: {
+      text: 'The retractable burglar bars provide security while maintaining a professional appearance.',
+      author: 'Facilities Manager, ZTA',
     },
-    {
-      id: 9,
-      title: "Mt Pleasant Residential Installation",
-      category: "residential",
-      location: "Mt Pleasant, Harare",
-      description: "Complete aluminum windows and doors installation for a modern family home, featuring contemporary designs and energy-efficient solutions.",
-      completionDate: "September 2024",
-      features: ["Slim Profile Frames", "Double Glazing Options", "Custom Color Matching", "Advanced Locking Systems"],
-      images: ["/3/1.jpeg", "/3/2.jpeg", "/3/3.jpeg", "/3/4.jpeg","/3/5.jpeg", "/3/6.jpeg", "/3/7.jpeg",],
-      testimonial: {
-        text: "Margcha's team was professional from consultation to installation. The new aluminum windows and doors have completely modernized our home's appearance.",
-        author: "Homeowner, Mt Pleasant"
-      }
+  },
+  {
+    id: 9,
+    title: 'Mt Pleasant Residential',
+    category: 'residential',
+    location: 'Mt Pleasant, Harare',
+    description:
+      'Complete aluminum windows and doors installation for a modern family home.',
+    completionDate: 'September 2024',
+    features: ['Slim Profile Frames', 'Double Glazing', 'Color Matching', 'Advanced Locking'],
+    images: [
+      '/3/1.jpeg',
+      '/3/2.jpeg',
+      '/3/3.jpeg',
+      '/3/4.jpeg',
+      '/3/5.jpeg',
+      '/3/6.jpeg',
+      '/3/7.jpeg',
+    ],
+    testimonial: {
+      text: 'Professional from consultation to installation. Completely modernized our home.',
+      author: 'Homeowner, Mt Pleasant',
     },
-    {
-      id: 10,
-      title: "Crowhill Premium Installation",
-      category: "residential",
-      location: "Crowhill, Harare",
-      description: "High-end aluminum windows and doors installation for an upscale residence, combining luxury aesthetics with superior performance.",
-      completionDate: "October 2024",
-      features: ["Premium Aluminum Systems", "Architectural Glass", "Custom Hardware", "Integrated Screens"],
-      images: ["/4/1.jpeg", "/4/2.jpeg", "/4/3.jpeg", "/4/4.jpeg", "/4/5.jpeg", "/4/6.jpeg", "/4/7.jpeg",],
-      testimonial: {
-        text: "The quality of Margcha's aluminum systems is exceptional. Every detail was executed perfectly, from the initial measurements to the final installation.",
-        author: "Homeowner, Crowhill"
-      }
-    }
-  ];
+  },
+  {
+    id: 10,
+    title: 'Crowhill Premium Installation',
+    category: 'residential',
+    location: 'Crowhill, Harare',
+    description:
+      'High-end aluminum windows and doors combining luxury aesthetics with superior performance.',
+    completionDate: 'October 2024',
+    features: ['Premium Systems', 'Architectural Glass', 'Custom Hardware', 'Integrated Screens'],
+    images: [
+      '/4/1.jpeg',
+      '/4/2.jpeg',
+      '/4/3.jpeg',
+      '/4/4.jpeg',
+      '/4/5.jpeg',
+      '/4/6.jpeg',
+      '/4/7.jpeg',
+    ],
+    testimonial: {
+      text: 'Every detail was executed perfectly, from measurements to final installation.',
+      author: 'Homeowner, Crowhill',
+    },
+  },
+];
 
-  useEffect(() => {
-    // Simulate loading from API
-    setTimeout(() => {
-      if (filter === 'all') {
-        setProjects(allProjects);
-      } else {
-        setProjects(allProjects.filter(project => project.category === filter));
-      }
-      setIsLoading(false);
-    }, 500);
-  }, [filter]);
+const categories = [
+  { id: 'all', name: 'All Projects' },
+  { id: 'shopfront', name: 'Shop Fronts' },
+  { id: 'partition', name: 'Partitions' },
+  { id: 'residential', name: 'Residential' },
+  { id: 'commercial', name: 'Commercial' },
+  { id: 'specialized', name: 'Specialized' },
+];
 
-  const toggleFavorite = (projectId) => {
-    setFavoriteProjects(prev => {
-      if (prev.includes(projectId)) {
-        return prev.filter(id => id !== projectId);
-      } else {
-        return [...prev, projectId];
-      }
-    });
-  };
+/* ─── Modal ─── */
+const ProjectModal = ({ project, onClose }) => {
+  const [imgIdx, setImgIdx] = useState(0);
 
-  const openProjectDetails = (project) => {
-    setSelectedProject(project);
-    setCurrentImageIndex(0);
-    // Prevent body scrolling when modal is open
-    document.body.style.overflow = 'hidden';
-  };
-
-  const closeProjectDetails = () => {
-    setSelectedProject(null);
-    document.body.style.overflow = 'auto';
-  };
-
-  const nextImage = () => {
-    if (selectedProject) {
-      setCurrentImageIndex((prevIndex) => 
-        prevIndex === selectedProject.images.length - 1 ? 0 : prevIndex + 1
-      );
-    }
-  };
-
-  const prevImage = () => {
-    if (selectedProject) {
-      setCurrentImageIndex((prevIndex) => 
-        prevIndex === 0 ? selectedProject.images.length - 1 : prevIndex - 1
-      );
-    }
-  };
-
-  const categories = [
-    { id: 'all', name: 'All Projects' },
-    { id: 'shopfront', name: 'Shop Fronts' },
-    { id: 'partition', name: 'Office Partitions' },
-    { id: 'residential', name: 'Residential' },
-    { id: 'commercial', name: 'Commercial' },
-    { id: 'specialized', name: 'Specialized' }
-  ];
-
-  const modalVariants = {
-    hidden: { opacity: 0, y: 50 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
-    exit: { opacity: 0, y: 50, transition: { duration: 0.2 } }
-  };
-
-  const slideInVariants = {
-    hidden: { x: '100%' },
-    visible: { x: 0, transition: { type: 'spring', damping: 25, stiffness: 500 } },
-    exit: { x: '100%', transition: { duration: 0.2 } }
-  };
+  if (!project) return null;
 
   return (
-    <div className="min-h-screen pt-14 bg-gray-50">
-      {/* Mobile Hero Section */}
-      <motion.section 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="relative py-12 bg-gradient-to-r from-maroon-900 to-gray-900"
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 md:p-6 glass-dark"
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ opacity: 0, y: 40, scale: 0.96 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, y: 40, scale: 0.96 }}
+        transition={{ duration: 0.3 }}
+        className="relative w-full max-w-4xl max-h-[90vh] overflow-auto bg-white dark:bg-gray-900 rounded-3xl flex flex-col md:flex-row"
+        onClick={(e) => e.stopPropagation()}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white relative z-10">
-          <motion.h1
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            className="text-3xl md:text-5xl font-bold mb-4"
-          >
-            Our Projects
-          </motion.h1>
-          <motion.p
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            className="text-sm md:text-xl text-gray-300 max-w-3xl mx-auto"
-          >
-            Discover our premium shopfitting solutions across Zimbabwe
-          </motion.p>
-        </div>
-        
-        {/* Floating action button for filter on mobile */}
-        <motion.button
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ delay: 0.4 }}
-          onClick={() => setFilterMenuOpen(true)}
-          className="fixed bottom-6 right-6 z-30 w-14 h-14 rounded-full bg-maroon-600 text-white shadow-lg flex items-center justify-center md:hidden"
+        {/* Close */}
+        <button
+          onClick={onClose}
+          className="absolute right-3 top-3 z-10 w-9 h-9 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-full shadow-soft flex items-center justify-center hover:bg-white dark:hover:bg-gray-700 transition-colors"
         >
-          <Filter size={24} />
-        </motion.button>
-      </motion.section>
+          <X size={18} weight="bold" />
+        </button>
 
-      {/* Filter Panel - Only visible on desktop */}
-      <section className="py-6 bg-white shadow-sm sticky top-14 z-20 hidden md:block">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center mb-4">
-            <Filter className="text-maroon-600 mr-2" />
-            <h3 className="text-lg font-semibold text-gray-900">Filter Projects</h3>
+        {/* Image gallery */}
+        <div className="md:w-1/2 bg-gray-900 relative flex-shrink-0">
+          <div className="relative h-64 md:h-full min-h-[300px]">
+            <OptimizedImage
+              src={project.images[imgIdx]}
+              alt={`${project.title} ${imgIdx + 1}`}
+              className="w-full h-full object-cover"
+              wrapperClassName="w-full h-full"
+              priority
+            />
+            {/* Dots */}
+            <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-1.5">
+              {project.images.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setImgIdx(i)}
+                  className={`w-2 h-2 rounded-full transition-all ${
+                    i === imgIdx ? 'bg-white w-5' : 'bg-white/50'
+                  }`}
+                />
+              ))}
+            </div>
+            {/* Arrows */}
+            {project.images.length > 1 && (
+              <>
+                <button
+                  onClick={() =>
+                    setImgIdx((p) => (p === 0 ? project.images.length - 1 : p - 1))
+                  }
+                  className="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/30 text-white flex items-center justify-center hover:bg-black/50"
+                >
+                  <CaretLeft size={18} weight="bold" />
+                </button>
+                <button
+                  onClick={() =>
+                    setImgIdx((p) => (p === project.images.length - 1 ? 0 : p + 1))
+                  }
+                  className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/30 text-white flex items-center justify-center hover:bg-black/50"
+                >
+                  <CaretRight size={18} weight="bold" />
+                </button>
+              </>
+            )}
+            <div className="absolute top-3 left-3 bg-black/50 text-white text-caption px-2 py-0.5 rounded">
+              {imgIdx + 1}/{project.images.length}
+            </div>
           </div>
-          <div className="flex flex-wrap gap-2">
-            {categories.map((category) => (
-              <button
-                key={category.id}
-                onClick={() => setFilter(category.id)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-300 ${
-                  filter === category.id 
-                    ? 'bg-maroon-600 text-white' 
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                {category.name}
-              </button>
+        </div>
+
+        {/* Content */}
+        <div className="md:w-1/2 p-5 md:p-7 overflow-y-auto">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="px-3 py-1 bg-maroon-50 dark:bg-maroon-900/20 text-maroon-700 dark:text-maroon-400 text-caption font-medium rounded-full">
+              {project.category.charAt(0).toUpperCase() + project.category.slice(1)}
+            </span>
+            <span className="text-caption text-gray-400 flex items-center gap-1">
+              <CalendarBlank size={12} weight="regular" /> {project.completionDate}
+            </span>
+          </div>
+          <h2 className="font-heading text-h3 text-gray-900 dark:text-white mb-2">{project.title}</h2>
+          <div className="flex items-center gap-1.5 text-body-sm text-gray-500 dark:text-gray-400 mb-4">
+            <MapPin size={14} weight="fill" className="text-maroon-600" />
+            {project.location}
+          </div>
+          <p className="text-body text-gray-600 dark:text-gray-300 mb-5">{project.description}</p>
+
+          <h3 className="font-heading text-body font-semibold text-gray-900 dark:text-white mb-3">
+            Key Features
+          </h3>
+          <div className="grid grid-cols-2 gap-2 mb-5">
+            {project.features.map((f) => (
+              <div key={f} className="flex items-center gap-2 text-body-sm text-gray-600 dark:text-gray-300">
+                <CheckCircle size={14} weight="fill" className="text-maroon-600 flex-shrink-0" />
+                {f}
+              </div>
             ))}
+          </div>
+
+          {project.testimonial && (
+            <div className="bg-gray-50 dark:bg-gray-900 rounded-xl p-4 mb-5">
+              <div className="flex items-center gap-2 mb-2">
+                <ChatCircle size={14} weight="fill" className="text-maroon-600" />
+                <h3 className="text-body-sm font-semibold text-gray-900 dark:text-white">Client Feedback</h3>
+              </div>
+              <p className="text-body-sm text-gray-600 dark:text-gray-300 italic mb-2">
+                &ldquo;{project.testimonial.text}&rdquo;
+              </p>
+              <p className="text-caption text-gray-500 dark:text-gray-400 text-right">
+                — {project.testimonial.author}
+              </p>
+            </div>
+          )}
+
+          <div className="flex gap-3 mt-5">
+            <Link
+              to="/contact"
+              className="btn-primary flex-1 !justify-center !text-body-sm"
+              onClick={onClose}
+            >
+              <ArrowRight size={16} weight="bold" /> Request Similar
+            </Link>
+            <button className="btn-ghost w-10 h-10 !p-0 flex items-center justify-center rounded-xl">
+              <ShareNetwork size={18} weight="regular" />
+            </button>
+          </div>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+};
+
+/* ─── Main ─── */
+const ProjectsPage = () => {
+  const [filter, setFilter] = useState('all');
+  const [projects, setProjects] = useState(allProjects);
+  const [selectedProject, setSelectedProject] = useState(null);
+  const [favorites, setFavorites] = useState([]);
+  const [filterOpen, setFilterOpen] = useState(false);
+
+  useEffect(() => {
+    setProjects(
+      filter === 'all' ? allProjects : allProjects.filter((p) => p.category === filter)
+    );
+  }, [filter]);
+
+  useEffect(() => {
+    document.body.style.overflow = selectedProject ? 'hidden' : '';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [selectedProject]);
+
+  return (
+    <div className="min-h-screen">
+      {/* ── Hero ── */}
+      <section className="relative overflow-hidden">
+        <img src="/shopfront2.jpeg" alt="" loading="eager" className="absolute inset-0 w-full h-full object-cover z-0" />
+        <div className="absolute inset-0 bg-gradient-to-b from-maroon-950/80 via-maroon-950/60 to-black/70 z-[1]" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent z-[2]" />
+
+        <div className="relative z-10 py-24 md:py-32">
+          <div className="container-width text-center text-white">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              <span className="inline-block px-4 py-1.5 glass rounded-full text-body-sm font-medium mb-5">
+                <Star size={14} weight="fill" className="inline mr-1.5 -mt-0.5" />
+                Portfolio
+              </span>
+              <h1 className="font-heading text-display md:text-[5rem] font-bold tracking-tight mb-4 text-shadow-hero">
+                Our Projects
+              </h1>
+              <p className="text-body-lg text-gray-300 max-w-2xl mx-auto">
+                Discover our premium shopfitting solutions across Zimbabwe.
+              </p>
+            </motion.div>
           </div>
         </div>
       </section>
 
-      {/* Filter Slide-in Menu for Mobile */}
+      {/* ── Filter bar — desktop (sticky) ── */}
+      <section className="py-5 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md shadow-soft sticky top-16 lg:top-18 z-20 hidden md:block">
+        <div className="container-width">
+          <div className="flex items-center gap-2">
+            <Funnel size={16} weight="bold" className="text-maroon-600 mr-1" />
+            {categories.map((c) => (
+              <button
+                key={c.id}
+                onClick={() => setFilter(c.id)}
+                className={`px-4 py-2 rounded-lg text-body-sm font-medium transition-all duration-300 ${
+                  filter === c.id
+                    ? 'bg-maroon-700 text-white shadow-maroon'
+                    : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+                }`}
+              >
+                {c.name}
+              </button>
+            ))}
+            <span className="ml-auto text-caption text-gray-400 dark:text-gray-400">
+              {projects.length} project{projects.length !== 1 ? 's' : ''}
+            </span>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Mobile filter FAB ── */}
+      <button
+        onClick={() => setFilterOpen(true)}
+        className="fixed bottom-6 right-6 z-30 w-14 h-14 rounded-full bg-maroon-700 text-white shadow-elevated flex items-center justify-center md:hidden active:scale-[0.95] transition-transform"
+      >
+        <Funnel size={22} weight="bold" />
+      </button>
+
+      {/* ── Mobile filter bottom sheet (glassmorphism) ── */}
       <AnimatePresence>
-        {filterMenuOpen && (
+        {filterOpen && (
           <>
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 0.5 }}
               exit={{ opacity: 0 }}
               className="fixed inset-0 bg-black z-40"
-              onClick={() => setFilterMenuOpen(false)}
+              onClick={() => setFilterOpen(false)}
             />
             <motion.div
-              variants={slideInVariants}
-              initial="hidden"
-              animate="visible"
-              exit="exit"
-              className="fixed bottom-0 left-0 right-0 bg-white z-50 rounded-t-3xl overflow-hidden shadow-xl"
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '100%' }}
+              transition={{ type: 'spring', damping: 30, stiffness: 400 }}
+              className="fixed bottom-0 left-0 right-0 z-50 rounded-t-3xl shadow-elevated bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-t border-white/20"
             >
               <div className="p-6">
-                <div className="flex justify-between items-center mb-6">
-                  <h3 className="text-xl font-bold text-gray-900">Filter Projects</h3>
-                  <button 
-                    onClick={() => setFilterMenuOpen(false)}
-                    className="p-2 rounded-full bg-gray-100"
+                {/* Handle */}
+                <div className="w-10 h-1 bg-gray-300 dark:bg-gray-600 rounded-full mx-auto mb-4" />
+                <div className="flex justify-between items-center mb-5">
+                  <h3 className="font-heading text-h4 text-gray-900 dark:text-white">Filter Projects</h3>
+                  <button
+                    onClick={() => setFilterOpen(false)}
+                    className="p-2 rounded-full bg-gray-100 dark:bg-gray-700"
                   >
-                    <X size={20} />
+                    <X size={18} weight="bold" />
                   </button>
                 </div>
-                
-                <div className="grid grid-cols-2 gap-3 mb-6">
-                  {categories.map((category) => (
+                <div className="grid grid-cols-2 gap-3 mb-5">
+                  {categories.map((c) => (
                     <button
-                      key={category.id}
+                      key={c.id}
                       onClick={() => {
-                        setFilter(category.id);
-                        setFilterMenuOpen(false);
+                        setFilter(c.id);
+                        setFilterOpen(false);
                       }}
-                      className={`px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 ${
-                        filter === category.id 
-                          ? 'bg-maroon-600 text-white shadow-md' 
-                          : 'bg-gray-100 text-gray-700'
+                      className={`px-4 py-3 rounded-xl text-body-sm font-medium transition-all ${
+                        filter === c.id
+                          ? 'bg-maroon-700 text-white shadow-maroon'
+                          : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300'
                       }`}
                     >
-                      {category.name}
+                      {c.name}
                     </button>
                   ))}
                 </div>
-                
-                <button
-                  onClick={() => setFilterMenuOpen(false)}
-                  className="w-full py-4 bg-maroon-600 text-white font-medium rounded-xl"
-                >
-                  Apply Filters
-                </button>
               </div>
             </motion.div>
           </>
         )}
       </AnimatePresence>
 
-      {/* Projects Grid */}
-      <section className="py-8 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Active Filter Display for Mobile */}
-          <div className="flex items-center mb-4 md:hidden">
-            <span className="text-sm text-gray-500 mr-2">Filter:</span>
-            <span className="px-3 py-1 bg-maroon-100 text-maroon-800 rounded-full text-sm font-medium">
-              {categories.find(c => c.id === filter)?.name || 'All Projects'}
+      {/* ── Projects grid ── */}
+      <section className="section-padding bg-gray-50 dark:bg-gray-900">
+        <div className="container-width">
+          {/* Active filter pill (mobile) */}
+          <div className="flex items-center gap-2 mb-6 md:hidden">
+            <span className="text-caption text-gray-400">Showing:</span>
+            <span className="px-3 py-1 bg-maroon-50 dark:bg-maroon-900/20 text-maroon-700 dark:text-maroon-400 rounded-full text-caption font-medium">
+              {categories.find((c) => c.id === filter)?.name}
             </span>
           </div>
-          
-          {isLoading ? (
-            <div className="flex justify-center items-center h-60">
-              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-maroon-600"></div>
-            </div>
-          ) : projects.length === 0 ? (
+
+          {projects.length === 0 ? (
             <div className="text-center py-20">
-              <h3 className="text-xl font-semibold text-gray-600">No projects found</h3>
-              <p className="text-gray-500 mt-2">Please try another filter</p>
+              <Funnel size={40} weight="light" className="text-gray-300 mx-auto mb-4" />
+              <h3 className="font-heading text-h4 text-gray-500 dark:text-gray-400">No projects found</h3>
+              <p className="text-body-sm text-gray-400 dark:text-gray-500 mt-2">Try another filter</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {projects.map((project, index) => (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+              {projects.map((project, i) => (
                 <motion.div
                   key={project.id}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ delay: index * 0.1 }}
-                  className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 flex flex-col"
+                  transition={{ delay: i * 0.08, duration: 0.5 }}
+                  className="card card-elevated overflow-hidden flex flex-col group cursor-pointer active:scale-[0.98] transition-transform"
+                  onClick={() => setSelectedProject(project)}
                 >
-                  {/* Project Image with Gradient Overlay */}
+                  {/* Card image area */}
                   <div className="relative">
-                    <img 
+                    <OptimizedImage
                       src={project.images[0]}
-                      alt={project.title} 
-                      className="w-full h-60 object-cover"
+                      alt={project.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                      wrapperClassName="h-56"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
-                    
-                    {/* Category Label */}
-                    <div className="absolute top-4 right-4 bg-maroon-600 text-white text-xs font-semibold px-3 py-1 rounded-full">
+                    {/* Gradient fade between image and text */}
+                    <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white dark:from-gray-950 to-transparent z-10 pointer-events-none" />
+
+                    <span className="absolute top-3 right-3 px-3 py-1 bg-maroon-700 text-white text-caption font-medium rounded-full z-10">
                       {project.category.charAt(0).toUpperCase() + project.category.slice(1)}
-                    </div>
-                    
-                    {/* Title Overlay */}
-                    <div className="absolute bottom-0 left-0 right-0 p-4">
-                      <h3 className="text-xl font-bold text-white mb-1">
-                        {project.title}
-                      </h3>
-                      <div className="flex items-center text-gray-200 text-sm">
-                        <MapPin size={14} className="mr-1" />
-                        <span>{project.location}</span>
-                      </div>
-                    </div>
-                    
-                    {/* Favorite Button */}
-                    <button 
+                    </span>
+                    <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        toggleFavorite(project.id);
+                        setFavorites((p) =>
+                          p.includes(project.id)
+                            ? p.filter((x) => x !== project.id)
+                            : [...p, project.id]
+                        );
                       }}
-                      className="absolute top-4 left-4 p-2 rounded-full bg-white/20 backdrop-blur-sm"
+                      className="absolute top-3 left-3 w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center z-10"
                     >
-                      <Heart 
-                        size={18} 
-                        className={`${favoriteProjects.includes(project.id) ? 'fill-red-500 text-red-500' : 'text-white'}`} 
+                      <Heart
+                        size={15}
+                        weight={favorites.includes(project.id) ? 'fill' : 'regular'}
+                        className={
+                          favorites.includes(project.id)
+                            ? 'text-red-500'
+                            : 'text-white'
+                        }
                       />
                     </button>
-                  </div>
-                  
-                  {/* Project Info */}
-                  <div className="p-5 flex flex-col flex-grow">
-                    <div className="flex items-center text-gray-600 mb-3 text-sm">
-                      <Clock size={16} className="mr-1 text-maroon-600" />
-                      <span>{project.completionDate}</span>
+                    <div className="absolute bottom-4 left-0 right-0 px-4 z-20">
+                      <h3 className="font-heading text-h4 text-gray-900 dark:text-white mb-0.5">
+                        {project.title}
+                      </h3>
+                      <span className="text-caption text-gray-500 dark:text-gray-400 flex items-center gap-1">
+                        <MapPin size={12} weight="fill" /> {project.location}
+                      </span>
                     </div>
-                    
-                    <p className="text-gray-600 mb-5 text-sm line-clamp-3">{project.description}</p>
-                    
-                    {/* Features */}
-                    <div className="mb-5 grid grid-cols-2 gap-y-2 gap-x-3">
-                      {project.features.slice(0, 4).map((feature, idx) => (
-                        <div key={idx} className="flex items-center text-gray-700 text-xs">
-                          <CheckCircle size={14} className="text-maroon-600 mr-1 flex-shrink-0" />
-                          <span className="truncate">{feature}</span>
+                  </div>
+
+                  {/* Card text area */}
+                  <div className="p-5 flex flex-col flex-grow">
+                    <div className="flex items-center text-body-sm text-gray-400 mb-3">
+                      <Clock size={14} weight="regular" className="mr-1.5 text-maroon-600" />
+                      {project.completionDate}
+                    </div>
+                    <p className="text-body-sm text-gray-500 dark:text-gray-400 mb-4 line-clamp-2">
+                      {project.description}
+                    </p>
+                    <div className="grid grid-cols-2 gap-y-1.5 gap-x-3 mb-5">
+                      {project.features.slice(0, 4).map((f) => (
+                        <div key={f} className="flex items-center text-caption text-gray-600 dark:text-gray-300">
+                          <CheckCircle
+                            size={12}
+                            weight="fill"
+                            className="text-maroon-600 mr-1 flex-shrink-0"
+                          />
+                          <span className="truncate">{f}</span>
                         </div>
                       ))}
                     </div>
-                    
-                    {/* View Details Button */}
-                    <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      onClick={() => openProjectDetails(project)}
-                      className="w-full mt-auto px-4 py-3 bg-maroon-600 text-white rounded-xl text-sm font-medium transition-colors duration-300 flex items-center justify-center"
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedProject(project);
+                      }}
+                      className="mt-auto w-full btn-primary !justify-center !text-body-sm !rounded-xl"
                     >
-                      <Eye size={16} className="mr-2" />
-                      View Project Details
-                    </motion.button>
+                      <Eye size={15} weight="bold" /> View Details
+                    </button>
                   </div>
                 </motion.div>
               ))}
@@ -475,173 +605,45 @@ const ProjectsPage = () => {
         </div>
       </section>
 
-      {/* Project Details Modal */}
+      {/* ── Modal ── */}
       <AnimatePresence>
         {selectedProject && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
-          >
-            <motion.div
-              variants={modalVariants}
-              initial="hidden"
-              animate="visible"
-              exit="exit"
-              className="relative w-full max-w-4xl max-h-full overflow-auto bg-white rounded-2xl flex flex-col md:flex-row"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {/* Close Button */}
-              <button 
-                onClick={closeProjectDetails}
-                className="absolute right-4 top-4 z-10 p-2 bg-white/80 backdrop-blur-sm rounded-full shadow-md hover:bg-white transition-colors"
-              >
-                <X size={20} />
-              </button>
-              
-              {/* Image Gallery Section */}
-              <div className="md:w-1/2 bg-gray-900 relative">
-                {/* Image Gallery */}
-                <div className="relative h-72 md:h-full w-full">
-                  <motion.img
-                    key={currentImageIndex}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    src={selectedProject.images[currentImageIndex]}
-                    alt={`${selectedProject.title} - Image ${currentImageIndex + 1}`}
-                    className="absolute inset-0 w-full h-full object-cover"
-                  />
-                  
-                  {/* Image Navigation */}
-                  <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2">
-                    {selectedProject.images.map((_, idx) => (
-                      <button 
-                        key={idx}
-                        onClick={() => setCurrentImageIndex(idx)}
-                        className={`w-2 h-2 rounded-full ${
-                          idx === currentImageIndex ? 'bg-white' : 'bg-white/50'
-                        }`}
-                      />
-                    ))}
-                  </div>
-                  
-                  {/* Navigation Arrows */}
-                  <button 
-                    onClick={prevImage}
-                    className="absolute left-4 top-1/2 transform -translate-y-1/2 p-2 bg-black/30 rounded-full text-white hover:bg-black/50 transition-colors"
-                  >
-                    <ChevronLeft size={20} />
-                  </button>
-                  <button 
-                    onClick={nextImage}
-                    className="absolute right-4 top-1/2 transform -translate-y-1/2 p-2 bg-black/30 rounded-full text-white hover:bg-black/50 transition-colors"
-                  >
-                    <ChevronRight size={20} />
-                  </button>
-                  
-                  {/* Image Counter */}
-                  <div className="absolute top-4 left-4 bg-black/50 text-white text-xs px-2 py-1 rounded">
-                    {currentImageIndex + 1}/{selectedProject.images.length}
-                  </div>
-                </div>
-              </div>
-              
-              {/* Content Section */}
-              <div className="p-6 md:w-1/2 overflow-y-auto">
-                <div className="mb-2 flex items-center gap-2">
-                  <span className="px-3 py-1 bg-maroon-100 text-maroon-800 text-xs font-medium rounded-full">
-                    {selectedProject.category.charAt(0).toUpperCase() + selectedProject.category.slice(1)}
-                  </span>
-                  <span className="text-gray-500 text-sm flex items-center">
-                    <Calendar size={14} className="mr-1" />
-                    {selectedProject.completionDate}
-                  </span>
-                </div>
-                
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">{selectedProject.title}</h2>
-                
-                <div className="flex items-center text-gray-600 mb-4 text-sm">
-                  <MapPin size={16} className="mr-1 text-maroon-600" />
-                  <span>{selectedProject.location}</span>
-                </div>
-                
-                <p className="text-gray-700 mb-6">{selectedProject.description}</p>
-                
-                {/* Features */}
-                <div className="mb-6">
-                  <h3 className="text-lg font-semibold mb-3 text-gray-900">Key Features</h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {selectedProject.features.map((feature, idx) => (
-                      <div key={idx} className="flex items-center text-gray-700">
-                        <CheckCircle size={16} className="text-maroon-600 mr-2 flex-shrink-0" />
-                        <span>{feature}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                
-                {/* Testimonial */}
-                {selectedProject.testimonial && (
-                  <div className="bg-gray-50 p-4 rounded-xl mb-6">
-                    <h3 className="text-lg font-semibold mb-3 text-gray-900 flex items-center">
-                      <MessageSquare size={18} className="mr-2 text-maroon-600" />
-                      Client Feedback
-                    </h3>
-                    <div className="mb-3 italic text-gray-600">
-                      "{selectedProject.testimonial.text}"
-                    </div>
-                    <div className="text-right text-sm text-gray-700 font-medium">
-                      - {selectedProject.testimonial.author}
-                    </div>
-                  </div>
-                )}
-                
-                {/* Action Buttons */}
-                <div className="flex flex-col sm:flex-row gap-3 mt-6">
-                  <button 
-                    onClick={() => navigate('/contact')}
-                    className="flex-1 py-3 bg-maroon-600 text-white rounded-xl font-medium flex items-center justify-center"
-                  >
-                    <ArrowRight size={18} className="mr-2" />
-                    Request Similar Project
-                  </button>
-                  <button className="py-3 px-4 bg-gray-100 text-gray-700 rounded-xl font-medium flex items-center justify-center">
-                    <Share2 size={18} className="mr-2" />
-                    Share
-                  </button>
-                </div>
-              </div>
-            </motion.div>
-          </motion.div>
+          <ProjectModal
+            project={selectedProject}
+            onClose={() => setSelectedProject(null)}
+          />
         )}
       </AnimatePresence>
 
-      {/* CTA Section */}
-      <motion.section
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        className="py-16 bg-gradient-to-r from-maroon-800 to-gray-900 text-white mt-10"
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-2xl md:text-3xl font-bold mb-6">
-            Ready to Start Your Project?
-          </h2>
-          <p className="text-base md:text-lg text-gray-300 mb-8 max-w-2xl mx-auto">
-            Let's create something exceptional for your space. Our team is ready to bring your vision to life.
-          </p>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            onClick={() => navigate('/contact')}
-            whileTap={{ scale: 0.95 }}
-            className="px-6 py-3 bg-white text-maroon-800 rounded-lg font-semibold hover:bg-gray-100 transition-colors duration-300 flex items-center gap-2 mx-auto"
-          >
-            Contact Us Today <ArrowRight size={20} />
-          </motion.button>
+      {/* ── CTA with blended bg image ── */}
+      <section className="relative overflow-hidden">
+        <img src="/shopfront3.jpeg" alt="" loading="lazy" className="absolute inset-0 w-full h-full object-cover" />
+        <div className="absolute inset-0 gradient-maroon opacity-80" />
+        <div className="absolute inset-0 bg-black/20" />
+
+        <div className="relative z-10 section-padding text-white">
+          <div className="container-width text-center">
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+            >
+              <SectionHeader
+                label="Get Started"
+                title="Ready to Start Your Project?"
+                subtitle="Let's create something exceptional for your space. Our team is ready to bring your vision to life."
+                light
+              />
+              <Link
+                to="/contact"
+                className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white text-maroon-800 dark:text-maroon-300 rounded-xl font-heading font-semibold hover:bg-gray-100 transition-colors shadow-lg"
+              >
+                Contact Us Today <ArrowRight size={18} weight="bold" />
+              </Link>
+            </motion.div>
+          </div>
         </div>
-      </motion.section>
+      </section>
     </div>
   );
 };

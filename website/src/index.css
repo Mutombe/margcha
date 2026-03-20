@@ -1,3 +1,146 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply font-body text-gray-800 bg-white dark:bg-gray-950 dark:text-gray-200;
+    transition: background-color 0.3s, color 0.3s;
+  }
+
+  html.dark {
+    color-scheme: dark;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading;
+  }
+
+  ::selection {
+    @apply bg-maroon-100 text-maroon-900;
+  }
+
+  .dark ::selection {
+    @apply bg-maroon-800 text-maroon-100;
+  }
+
+  img {
+    @apply max-w-full h-auto;
+    content-visibility: auto;
+  }
+}
+
+@layer components {
+  .section-padding {
+    @apply py-16 md:py-24 lg:py-32;
+  }
+
+  .container-width {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .section-title {
+    @apply text-h2 md:text-display font-heading font-bold text-gray-900 dark:text-white tracking-tight;
+  }
+
+  .section-subtitle {
+    @apply text-body-lg text-gray-500 dark:text-gray-400 max-w-2xl mx-auto mt-4;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 bg-maroon-700 text-white font-heading font-semibold
+           rounded-xl hover:bg-maroon-800 transition-all duration-300 shadow-maroon hover:shadow-lg
+           focus:outline-none focus:ring-2 focus:ring-maroon-500 focus:ring-offset-2
+           dark:focus:ring-offset-gray-900
+           active:scale-[0.97];
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 bg-white dark:bg-gray-800 text-maroon-800 dark:text-maroon-200 font-heading font-semibold
+           rounded-xl border-2 border-maroon-200 dark:border-maroon-700 hover:border-maroon-300 dark:hover:border-maroon-600 hover:bg-maroon-50 dark:hover:bg-gray-700
+           transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-maroon-500 focus:ring-offset-2
+           dark:focus:ring-offset-gray-900
+           active:scale-[0.97];
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 text-white font-heading font-semibold
+           rounded-xl border-2 border-white/30 hover:bg-white/10 hover:border-white/60
+           transition-all duration-300 active:scale-[0.97];
+  }
+
+  .card {
+    @apply bg-white dark:bg-gray-800 rounded-2xl shadow-card hover:shadow-card-hover dark:shadow-none dark:border dark:border-gray-700 transition-all duration-500;
+  }
+
+  .card-elevated {
+    @apply bg-white dark:bg-gray-800 rounded-3xl shadow-elevated dark:shadow-none dark:border dark:border-gray-700;
+  }
+
+  /* Glassmorphism */
+  .glass {
+    @apply bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl;
+  }
+
+  .glass-dark {
+    @apply bg-black/20 backdrop-blur-xl border border-white/10 rounded-2xl;
+  }
+
+  .glass-light {
+    @apply bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl border border-white/40 dark:border-gray-700/40 rounded-2xl shadow-soft dark:shadow-none;
+  }
+
+  .gradient-maroon {
+    @apply bg-gradient-to-br from-maroon-800 via-maroon-900 to-gray-900;
+  }
+
+  .gradient-subtle {
+    @apply bg-gradient-to-b from-gray-50 dark:from-gray-900 to-white dark:to-gray-950;
+  }
+
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-maroon-600 to-maroon-800;
+  }
+
+  /* Hyperlinks */
+  .hyperlink {
+    @apply text-maroon-600 dark:text-maroon-400 hover:text-maroon-800 dark:hover:text-maroon-300
+           underline decoration-maroon-300 dark:decoration-maroon-600 hover:decoration-maroon-600 dark:hover:decoration-maroon-400
+           underline-offset-2 transition-colors duration-200 font-medium cursor-pointer;
+  }
+
+  /* Card image fade */
+  .card-fade-image {
+    @apply relative overflow-hidden;
+  }
+
+  .card-fade-image .card-image-fade {
+    @apply absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-white dark:from-gray-800 to-transparent z-10 pointer-events-none;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .text-shadow-hero {
+    text-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+  }
+
+  .text-shadow-hero-sm {
+    text-shadow: 0 1px 12px rgba(0, 0, 0, 0.2);
+  }
+}
+
+/* Leaflet */
+.leaflet-container {
+  @apply rounded-2xl;
+  z-index: 1 !important;
+}

@@ -1,1123 +1,518 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from 'react';
+import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import {
   MapPin,
   Phone,
-  Mail,
+  EnvelopeSimple,
   Clock,
-  Send,
-  MessageSquare,
+  PaperPlaneTilt,
+  ChatCircle,
   User,
   Briefcase,
-  ChevronRight,
-  Facebook,
-  Instagram,
-  Linkedin,
-  Twitter,
+  CaretDown,
+  FacebookLogo,
+  InstagramLogo,
+  LinkedinLogo,
+  XLogo,
   CheckCircle,
-  Menu,
+  List,
   X,
   ArrowUp,
   Heart,
-} from "lucide-react";
-import L from "leaflet";
-import "leaflet/dist/leaflet.css";
-import { motion } from "framer-motion";
+  CaretRight,
+} from '@phosphor-icons/react';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+import SectionHeader from '../shared/SectionHeader';
 
+/* ─── Map ─── */
 const MapComponent = () => {
   const mapRef = useRef(null);
-  const mapInstanceRef = useRef(null);
+  const mapInstance = useRef(null);
 
   useEffect(() => {
-    // Don't initialize until the component is mounted and ref is available
-    if (!mapRef.current) return;
+    if (!mapRef.current || mapInstance.current) return;
 
-    // Fix for Leaflet's icon paths
     delete L.Icon.Default.prototype._getIconUrl;
     L.Icon.Default.mergeOptions({
-      iconRetinaUrl:
-        "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png",
-      iconUrl:
-        "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
-      shadowUrl:
-        "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
+      iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+      iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+      shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
     });
 
-    // Wait a moment for the container to be properly sized
-    const initializeMap = () => {
-      // Only initialize once
-      if (mapInstanceRef.current) return;
-
-      // Create the map instance
-      mapInstanceRef.current = L.map(mapRef.current, {
+    const initMap = () => {
+      if (mapInstance.current) return;
+      mapInstance.current = L.map(mapRef.current, {
         zoomControl: true,
-        scrollWheelZoom: false, // Disable scroll zoom for better mobile experience
+        scrollWheelZoom: false,
       }).setView([-17.824858, 31.053028], 13);
 
-      // Add OpenStreetMap tiles
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution:
-          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      }).addTo(mapInstanceRef.current);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      }).addTo(mapInstance.current);
 
-      // Define locations
       const locations = [
-        {
-          name: "Jackson Road Office",
-          coords: [-17.824858, 31.053028],
-          address: "8 Jackson Road, Hillside, Harare",
-        },
-        {
-          name: "NRZ Complex Office",
-          coords: [-17.82975, 31.03497],
-          address: "NRZ Complex, Seke Road, Harare",
-        },
+        { name: 'Msasa Office', coords: [-17.824858, 31.053028], address: '70 Mutare Road, Cnr Steven Drive, Colonnade Building, Office Suite 8, Msasa, Harare' },
+        { name: 'Secondary Office', coords: [-17.82975, 31.03497], address: 'Harare, Zimbabwe' },
       ];
 
-      // Add markers with popups
-      locations.forEach((location) => {
-        const marker = L.marker(location.coords).addTo(mapInstanceRef.current);
-        marker.bindPopup(`<b>${location.name}</b><br>${location.address}`);
+      locations.forEach((loc) => {
+        L.marker(loc.coords).addTo(mapInstance.current).bindPopup(`<b>${loc.name}</b><br>${loc.address}`);
       });
 
-      // Fit map to show both markers
-      const bounds = L.latLngBounds(locations.map((loc) => loc.coords));
-      mapInstanceRef.current.fitBounds(bounds, { padding: [50, 50] });
+      mapInstance.current.fitBounds(locations.map((l) => l.coords), { padding: [50, 50] });
     };
 
-    // Initialize the map after a short delay to ensure container is sized
-    setTimeout(initializeMap, 100);
+    setTimeout(initMap, 100);
 
-    // When screen size changes, refresh the map
-    const handleResize = () => {
-      if (mapInstanceRef.current) {
-        mapInstanceRef.current.invalidateSize();
-      }
-    };
+    const handleResize = () => mapInstance.current?.invalidateSize();
+    window.addEventListener('resize', handleResize);
 
-    window.addEventListener("resize", handleResize);
-
-    // For mobile: when orientation changes, refresh the map
-    window.addEventListener("orientationchange", () => {
-      setTimeout(handleResize, 200);
-    });
-
-    // Cleanup function to destroy map and remove event listeners when component unmounts
     return () => {
-      window.removeEventListener("resize", handleResize);
-      window.removeEventListener("orientationchange", handleResize);
-
-      if (mapInstanceRef.current) {
-        mapInstanceRef.current.remove();
-        mapInstanceRef.current = null;
+      window.removeEventListener('resize', handleResize);
+      if (mapInstance.current) {
+        mapInstance.current.remove();
+        mapInstance.current = null;
       }
     };
   }, []);
 
-  return (
-    <div ref={mapRef} className="w-full h-64 md:h-80 lg:h-96 rounded-2xl" />
-  );
+  return <div ref={mapRef} className="w-full h-64 md:h-80 lg:h-96 rounded-2xl" />;
 };
 
+/* ─── Data ─── */
+const contactInfo = [
+  { icon: MapPin, title: 'Our Location', details: ['70 Mutare Road, Cnr Steven Drive,', 'Colonnade Building, Office Suite 8,', 'Msasa, Harare'] },
+  { icon: Phone, title: 'Phone Numbers', details: ['+263 783 574 677', '+263 714 273 307'] },
+  { icon: EnvelopeSimple, title: 'Email Address', details: ['sales@margchashopfitting.com'] },
+  { icon: Clock, title: 'Business Hours', details: ['Monday - Friday: 8am - 5pm', 'Saturday: 9am - 1pm', 'Sunday: Closed'] },
+];
+
+const serviceOptions = [
+  'Aluminium Fabrication',
+  'Joinery Services',
+  'Ceiling Solutions',
+  'Security Systems',
+  'Shower Enclosures',
+  'Office Partitions',
+  'Other Services',
+];
+
+const faqData = [
+  {
+    q: 'What areas do you serve?',
+    a: 'We primarily serve Harare and surrounding areas, with projects extending to other cities in Zimbabwe and the SADC region.',
+  },
+  {
+    q: 'Do you offer free consultations?',
+    a: 'Yes, we offer free initial consultations to understand your project requirements and provide detailed quotations.',
+  },
+  {
+    q: 'What are your payment terms?',
+    a: 'We offer flexible payment plans: 60% initial deposit, 20% after 31 days, and final 20% after 62 days.',
+  },
+  {
+    q: 'How long does a typical project take?',
+    a: 'Project timelines vary based on scope and complexity. Most residential projects take 2-4 weeks, while commercial projects may take 4-8 weeks.',
+  },
+];
+
+const socials = [
+  { Icon: FacebookLogo, href: 'https://www.facebook.com/share/14DcFhcoebh/?mibextid=wwXIfr', label: 'Facebook' },
+  { Icon: InstagramLogo, href: 'https://www.instagram.com/margcha.shopfitting?igsh=MXg5ZW1kazkxZ3UycQ==', label: 'Instagram' },
+  { Icon: XLogo, href: 'https://x.com/margchash?t=y0a2AxRqvXI4vHFxV-Jusw&s=09', label: 'Twitter' },
+  { Icon: LinkedinLogo, href: 'https://www.linkedin.com/in/margcha-shopfitting-1428b6269', label: 'LinkedIn' },
+];
+
+const fadeUp = {
+  initial: { opacity: 0, y: 24 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true, margin: '-50px' },
+  transition: { duration: 0.5 },
+};
+
+/* ─── Main ─── */
 const ContactPage = () => {
-  // State for form fields
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    company: "",
-    subject: "",
-    message: "",
-    service: "",
+    name: '', email: '', phone: '', company: '', subject: '', message: '', service: '',
   });
-
-  const [formStatus, setFormStatus] = useState({
-    isSubmitting: false,
-    isSubmitted: false,
-    error: null,
-  });
-
-  const [showNav, setShowNav] = useState(false);
+  const [formStatus, setFormStatus] = useState({ submitting: false, submitted: false });
   const [showScrollTop, setShowScrollTop] = useState(false);
-  const [activeTab, setActiveTab] = useState("contact");
+  const [openFaq, setOpenFaq] = useState(null);
 
-  // Scroll to top button visibility
   useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 300) {
-        setShowScrollTop(true);
-      } else {
-        setShowScrollTop(false);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    const handleScroll = () => setShowScrollTop(window.scrollY > 400);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setFormStatus({
-      isSubmitting: true,
-      isSubmitted: false,
-      error: null,
-    });
-
-    // Simulate form submission
+    setFormStatus({ submitting: true, submitted: false });
     setTimeout(() => {
-      setFormStatus({
-        isSubmitting: false,
-        isSubmitted: true,
-        error: null,
-      });
-
-      // Reset form after submission
-      setFormData({
-        name: "",
-        email: "",
-        phone: "",
-        company: "",
-        subject: "",
-        message: "",
-        service: "",
-      });
+      setFormStatus({ submitting: false, submitted: true });
+      setFormData({ name: '', email: '', phone: '', company: '', subject: '', message: '', service: '' });
     }, 1500);
   };
 
-  const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
-  };
-
-  const contactInfo = [
-    {
-      icon: <MapPin />,
-      title: "Our Location",
-      details: [
-        "No. 70 Mutare Road,",
-        "Cnr Steven Drive,",
-        "Colonnade Building,",
-        "Office Suite 8 First Floor,",
-        "Msasa, Harare",
-      ],
-    },
-    {
-      icon: <Phone />,
-      title: "Phone Numbers",
-      details: ["+263 783 574 677", "+263 714 273 307"],
-    },
-    {
-      icon: <Mail />,
-      title: "Email Address",
-      details: ["sales@margchashopfitting.com"],
-    },
-    {
-      icon: <Clock />,
-      title: "Business Hours",
-      details: [
-        "Monday - Friday: 8am - 5pm",
-        "Saturday: 9am - 1pm",
-        "Sunday: Closed",
-      ],
-    },
-  ];
-
-  const serviceOptions = [
-    "Aluminium Fabrication",
-    "Joinery Services",
-    "Ceiling Solutions",
-    "Security Systems",
-    "Shower Enclosures",
-    "Office Partitions",
-    "Other Services",
-  ];
-
-  // Testimonials data
-  const testimonials = [
-    {
-      name: "Sarah Thompson",
-      company: "Sunrise Retail",
-      text: "Margcha transformed our retail space with beautiful aluminium shop fronts and modern ceiling solutions. Professional team and excellent quality!",
-      rating: 5,
-    },
-    {
-      name: "Michael Carter",
-      company: "Executive Offices Ltd",
-      text: "The office partitions and security systems installed by Margcha exceeded our expectations. Their attention to detail is remarkable.",
-      rating: 5,
-    },
-    {
-      name: "Emma Johnson",
-      company: "Luxe Hotels",
-      text: "We've used Margcha for multiple hotel renovation projects. Their shower enclosures and glass work are top-notch with impeccable finishing.",
-      rating: 4,
-    },
-  ];
-
   return (
-    <div className="min-h-screen bg-gray-50 relative">
-      {/* Mobile Navigation Toggle */}
-      <button
-        onClick={() => setShowNav(!showNav)}
-        className="fixed top-4 right-4 z-50 bg-maroon-600 text-white p-2 rounded-full shadow-lg md:hidden"
-      >
-        {showNav ? <X size={24} /> : <Menu size={24} />}
-      </button>
-
-      {/* Scroll to Top Button */}
+    <div className="min-h-screen relative">
+      {/* Scroll to top */}
       {showScrollTop && (
         <button
-          onClick={scrollToTop}
-          className="fixed bottom-6 right-6 z-40 bg-maroon-600 text-white p-3 rounded-full shadow-lg animate-pulse"
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          className="fixed bottom-6 right-6 z-40 w-10 h-10 bg-maroon-700 text-white rounded-full shadow-elevated flex items-center justify-center hover:bg-maroon-800 active:scale-[0.98] transition-transform transition-colors"
         >
-          <ArrowUp size={20} />
+          <ArrowUp size={18} weight="bold" />
         </button>
       )}
 
-      {/* Mobile Navigation Overlay */}
-      <div
-        className={`fixed inset-0 bg-black/90 z-40 md:hidden transition-opacity duration-300 ${
-          showNav ? "opacity-100" : "opacity-0 pointer-events-none"
-        }`}
-      >
-        <div className="flex flex-col items-center justify-center h-full">
-          <div className="text-center text-white mb-12">
-            <h2 className="text-2xl font-bold mb-2">Margcha Shopfitting</h2>
-            <p className="text-gray-300">Quality Aluminium Solutions</p>
-          </div>
+      {/* ── Hero ── */}
+      <section className="relative py-24 md:py-32 lg:py-40 overflow-hidden">
+        {/* Dark gradient bg matching nav */}
+        <div className="absolute inset-0 bg-gradient-to-br from-maroon-900 via-maroon-950 to-gray-900" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_60%_30%,rgba(145,42,42,0.35),transparent_65%)]" />
 
-          <nav className="flex flex-col items-center space-y-6">
-            <a
-              href="#"
-              onClick={() => {
-                setActiveTab("contact");
-                setShowNav(false);
-              }}
-              className={`text-xl font-medium ${
-                activeTab === "contact" ? "text-maroon-400" : "text-white"
-              }`}
-            >
-              Contact
-            </a>
-            <a
-              href="#"
-              onClick={() => {
-                setActiveTab("services");
-                setShowNav(false);
-              }}
-              className={`text-xl font-medium ${
-                activeTab === "services" ? "text-maroon-400" : "text-white"
-              }`}
-            >
-              Services
-            </a>
-            <a
-              href="#"
-              onClick={() => {
-                setActiveTab("faq");
-                setShowNav(false);
-              }}
-              className={`text-xl font-medium ${
-                activeTab === "faq" ? "text-maroon-400" : "text-white"
-              }`}
-            >
-              FAQ
-            </a>
-            <a
-              href="#"
-              onClick={() => {
-                setActiveTab("testimonials");
-                setShowNav(false);
-              }}
-              className={`text-xl font-medium ${
-                activeTab === "testimonials" ? "text-maroon-400" : "text-white"
-              }`}
-            >
-              Testimonials
-            </a>
-          </nav>
-
-          <div className="absolute bottom-12 flex space-x-4">
-            <a
-              href="tel:+2637835746777"
-              className="text-white hover:text-maroon-400"
-            >
-              <Phone size={24} />
-            </a>
-            <a
-              href="mailto:sales@margchashopfitting.com"
-              className="text-white hover:text-maroon-400"
-            >
-              <Mail size={24} />
-            </a>
-          </div>
-        </div>
-      </div>
-
-      {/* Hero Section with Parallax Effect */}
-      <section className="relative pt-24 pb-16 md:pt-32 md:pb-20 lg:py-40 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-maroon-900 to-black opacity-90"></div>
-        <div className="absolute inset-0 bg-[url('/api/placeholder/1920/1080')] bg-cover bg-center opacity-40"></div>
-        <div className="absolute inset-0 bg-pattern-overlay opacity-20"></div>
-
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white pt-20">
-          <div className="animate-fadeIn">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 tracking-tight">
-              Get In Touch
-            </h1>
-            <p className="text-lg md:text-xl text-gray-200 max-w-2xl mx-auto leading-relaxed">
-              Quality craftsmanship and exceptional service for all your
-              shopfitting needs.
-            </p>
-
-            <div className="mt-8 flex flex-col sm:flex-row justify-center gap-4">
-              <a
-                href="#contact-form"
-                className="px-6 py-3 bg-white text-maroon-900 rounded-full font-medium hover:bg-gray-100 transition-colors duration-300 shadow-xl hover:shadow-2xl transform hover:-translate-y-1 flex items-center justify-center"
-              >
-                <MessageSquare className="w-5 h-5 mr-2" />
-                Contact Us
-              </a>
-              <a
-                href="tel:+2637835746777"
-                className="px-6 py-3 bg-transparent border-2 border-white text-white rounded-full font-medium hover:bg-white/20 transition-colors duration-300 flex items-center justify-center"
-              >
-                <Phone className="w-5 h-5 mr-2" />
-                Call Now
-              </a>
-            </div>
-          </div>
-
-          {/* Quick Contact Cards */}
-          <div className="mt-12 md:mt-16 grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
-            {contactInfo.map((info, index) => (
-              <div
-                key={index}
-                className="bg-white/10 backdrop-blur-md rounded-xl p-4 text-center hover:bg-white/20 transition-all duration-300 border border-white/20"
-              >
-                <div className="inline-flex items-center justify-center w-10 h-10 bg-white/20 rounded-full mb-3">
-                  <div className="text-white">
-                    {React.cloneElement(info.icon, { className: "w-5 h-5" })}
-                  </div>
-                </div>
-                <h3 className="text-sm font-semibold mb-1">{info.title}</h3>
-                <div className="text-xs text-gray-300">
-                  {index === 0 ? (
-                    <p className="truncate">{info.details[0]}</p>
-                  ) : index === 1 ? (
-                    <p>{info.details[0]}</p>
-                  ) : index === 2 ? (
-                    <p className="truncate">{info.details[0]}</p>
-                  ) : (
-                    <p>{info.details[0].split(":")[0]}</p>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
+        {/* Subtle bg pattern */}
+        <div className="absolute inset-0 opacity-[0.02]">
+          <img src="/7.jpg" alt="" className="w-full h-full object-cover" />
         </div>
 
-        {/* Wave Overlay */}
-        <div className="absolute bottom-0 left-0 right-0">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 1440 120"
-            className="w-full h-auto"
-          >
-            <path
-              fill="#f9fafb"
-              fillOpacity="1"
-              d="M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z"
-            ></path>
-          </svg>
-        </div>
-      </section>
-
-      {/* Floating Contact Info Card */}
-      <div className="sticky top-4 right-4 z-30 hidden lg:block float-right mr-4 max-w-xs">
-        <div className="bg-white rounded-xl shadow-xl overflow-hidden border border-gray-100">
-          <div className="p-4 border-b border-gray-100 bg-gray-50">
-            <h3 className="font-semibold text-gray-900 flex items-center text-lg">
-              <Phone className="w-5 h-5 mr-2 text-maroon-600" />
-              Quick Contact
-            </h3>
-          </div>
-          <div className="p-4 space-y-3">
-            {contactInfo.map((info, index) => (
-              <div key={index} className="flex items-start">
-                <div className="mt-1 text-maroon-600 mr-3">
-                  {React.cloneElement(info.icon, { className: "w-4 h-4" })}
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-700">
-                    {info.title}
-                  </p>
-                  <p className="text-xs text-gray-600 mt-1">
-                    {info.details[0]}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-          <div className="p-4 bg-maroon-50">
-            <a
-              href="#contact-form"
-              className="block w-full py-2 bg-maroon-600 text-white rounded-lg text-center text-sm font-medium hover:bg-maroon-700 transition-colors"
-            >
-              Send Message
-            </a>
-          </div>
-        </div>
-      </div>
-
-      {/* Contact Information Cards */}
-      <section className="py-12 md:py-16 bg-white relative z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12 md:mb-16">
-            <span className="inline-block px-3 py-1 bg-maroon-100 text-maroon-800 rounded-full text-sm font-medium mb-3">
-              Get In Touch
+        <div className="relative z-10 container-width text-center text-white">
+          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
+            <span className="inline-block px-4 py-1.5 glass rounded-full text-body-sm font-medium mb-6">
+              Let's Connect
             </span>
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3 md:mb-4">
-              Ready to Work Together?
-            </h2>
-            <p className="text-base md:text-lg text-gray-600 max-w-3xl mx-auto">
-              Our team is ready to assist you with any questions about our
-              services or to provide a free consultation for your project.
+            <h1 className="font-heading text-display md:text-[5rem] font-bold leading-[1.05] tracking-tight mb-4 text-shadow-hero">
+              Get In <span className="text-maroon-200">Touch</span>
+            </h1>
+            <p className="text-body-lg text-gray-300 max-w-2xl mx-auto">
+              Quality craftsmanship and exceptional <Link to="/services" className="hyperlink">service</Link> for all your shopfitting needs. Explore our <Link to="/projects" className="hyperlink">projects</Link> or learn <Link to="/about" className="hyperlink">about us</Link>.
             </p>
-          </div>
+          </motion.div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
-            {contactInfo.map((info, index) => (
-              <div
-                key={index}
-                className="bg-white rounded-xl p-5 md:p-6 text-center hover:shadow-xl transition-all duration-500 border border-gray-100 group relative overflow-hidden"
+          {/* Quick contact cards as glass elements */}
+          <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-5">
+            {contactInfo.map(({ icon: Icon, title, details }, i) => (
+              <motion.div
+                key={title}
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 + i * 0.1 }}
+                className="glass rounded-xl p-4 text-center hover:bg-white/15 active:scale-[0.98] transition-transform transition-colors cursor-default"
               >
-                {/* Decorative background circle */}
-                <div className="absolute -right-10 -bottom-10 w-40 h-40 rounded-full bg-maroon-50 group-hover:bg-maroon-100 transition-colors duration-500"></div>
-
-                <div className="relative z-10">
-                  <div className="inline-flex items-center justify-center w-14 h-14 bg-maroon-50 rounded-xl mb-5 group-hover:bg-maroon-100 transition-colors duration-300 group-hover:scale-110 transform">
-                    <div className="text-maroon-600">
-                      {React.cloneElement(info.icon, { className: "w-6 h-6" })}
-                    </div>
-                  </div>
-                  <h3 className="text-lg md:text-xl font-semibold text-gray-900 mb-4">
-                    {info.title}
-                  </h3>
-                  <div className="space-y-2">
-                    {info.details.map((detail, idx) => (
-                      <p
-                        key={idx}
-                        className="text-sm md:text-base text-gray-600"
-                      >
-                        {detail}
-                      </p>
-                    ))}
-                  </div>
+                <div className="w-10 h-10 rounded-lg bg-white/15 flex items-center justify-center mx-auto mb-2">
+                  <Icon size={18} weight="regular" className="text-white" />
                 </div>
-              </div>
+                <h3 className="text-caption font-semibold mb-1">{title}</h3>
+                <p className="text-caption text-gray-300 truncate">{details[0]}</p>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Map and Contact Form Section with Background Design */}
-      <section className="py-12 md:py-16 bg-gray-50 relative overflow-hidden">
-        {/* Background decorative elements */}
-        <div className="absolute top-0 left-0 w-64 h-64 bg-maroon-100 rounded-full opacity-20 -translate-x-1/2 -translate-y-1/2"></div>
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-maroon-100 rounded-full opacity-20 translate-x-1/3 translate-y-1/3"></div>
+      {/* ── Contact Info Cards ── */}
+      <section className="section-padding bg-white dark:bg-gray-950 relative overflow-hidden">
+        {/* Subtle bg image */}
+        <div className="absolute inset-0 opacity-[0.02]">
+          <img src="/8.jpg" alt="" className="w-full h-full object-cover" />
+        </div>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12">
-            {/* Map */}
-            <div className="bg-white rounded-2xl shadow-xl overflow-hidden transform transition-all duration-500 hover:-translate-y-1 hover:shadow-2xl h-64 md:h-96 lg:h-[400px]">
-              <MapComponent />
-            </div>
+        <div className="relative z-10 container-width">
+          <SectionHeader
+            label="Get In Touch"
+            title="Contact Information"
+            subtitle={<>Reach out to us through any of these channels. View our <Link to="/services" className="hyperlink">services</Link> or browse our <Link to="/projects" className="hyperlink">completed projects</Link>.</>}
+          />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {contactInfo.map(({ icon: Icon, title, details }, i) => (
+              <motion.div
+                key={title}
+                {...fadeUp}
+                transition={{ delay: i * 0.1, duration: 0.5 }}
+                className="card p-6 text-center group hover:border-maroon-100 active:scale-[0.98] transition-transform"
+              >
+                <div className="w-14 h-14 rounded-2xl bg-maroon-50 dark:bg-maroon-900/20 flex items-center justify-center mx-auto mb-4 group-hover:bg-maroon-100 transition-colors">
+                  <Icon size={22} weight="duotone" className="text-maroon-600" />
+                </div>
+                <h3 className="font-heading text-h4 text-gray-900 dark:text-white mb-3">{title}</h3>
+                <div className="space-y-1">
+                  {details.map((d, j) => (
+                    <p key={j} className="text-body-sm text-gray-500 dark:text-gray-400">{d}</p>
+                  ))}
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-            {/* Contact Form */}
-            <div
-              id="contact-form"
-              className="bg-white rounded-2xl shadow-xl overflow-hidden"
-            >
-              <div className="p-4 md:p-6 border-b border-gray-100">
-                <h3 className="text-xl md:text-2xl font-semibold text-gray-900 flex items-center">
-                  <MessageSquare className="w-5 h-5 md:w-6 md:h-6 mr-2 text-maroon-600" />
-                  Send Us a Message
-                </h3>
+      {/* ── Map + Form ── */}
+      <section id="contact-form" className="section-padding bg-gray-50 dark:bg-gray-900 relative overflow-hidden">
+        {/* Subtle bg image */}
+        <div className="absolute inset-0 opacity-[0.02]">
+          <img src="/9.jpg" alt="" className="w-full h-full object-cover" />
+        </div>
+
+        <div className="relative z-10 container-width">
+          <SectionHeader
+            label="Reach Us"
+            title="Send Us a Message"
+            subtitle="Fill out the form and we'll get back to you within 24 hours."
+          />
+          <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
+            {/* Map side */}
+            <motion.div {...fadeUp} className="lg:w-2/5 space-y-6">
+              <div className="card overflow-hidden">
+                <MapComponent />
               </div>
-              <div className="p-4 md:p-6">
-                {formStatus.isSubmitted ? (
-                  <div className="text-center py-8 md:py-12">
-                    <div className="inline-flex items-center justify-center w-16 h-16 md:w-20 md:h-20 bg-green-100 rounded-full mb-4 md:mb-6 animate-pulse">
-                      <CheckCircle className="w-8 h-8 md:w-10 md:h-10 text-green-600" />
+
+              {/* Social links card */}
+              <div className="card p-6">
+                <h3 className="font-heading text-h4 text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                  <Heart size={20} weight="duotone" className="text-maroon-600" />
+                  Follow Us
+                </h3>
+                <div className="flex gap-3">
+                  {socials.map(({ Icon, href, label }) => (
+                    <a
+                      key={href}
+                      href={href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={label}
+                      className="w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-maroon-700 hover:text-white active:scale-[0.98] transition-transform transition-all duration-300"
+                    >
+                      <Icon size={18} weight="regular" />
+                    </a>
+                  ))}
+                </div>
+              </div>
+
+              {/* Quick info glass-dark card */}
+              <div className="glass-dark rounded-2xl p-6 text-white">
+                <h3 className="font-heading text-h4 mb-3 flex items-center gap-2">
+                  <Clock size={20} weight="duotone" />
+                  Office Hours
+                </h3>
+                <div className="space-y-2 text-body-sm text-gray-300">
+                  <div className="flex justify-between">
+                    <span>Monday - Friday</span>
+                    <span className="text-white font-medium">8am - 5pm</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Saturday</span>
+                    <span className="text-white font-medium">9am - 1pm</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Sunday</span>
+                    <span className="text-maroon-300 font-medium">Closed</span>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Form */}
+            <motion.div {...fadeUp} className="lg:w-3/5">
+              <div className="glass-light rounded-2xl p-6 md:p-8 card-elevated">
+                {formStatus.submitted ? (
+                  <div className="text-center py-12">
+                    <div className="w-16 h-16 rounded-full bg-green-50 dark:bg-green-900/20 flex items-center justify-center mx-auto mb-4">
+                      <CheckCircle size={32} weight="duotone" className="text-green-500" />
                     </div>
-                    <h4 className="text-xl md:text-2xl font-semibold text-gray-900 mb-3 md:mb-4">
-                      Message Sent!
-                    </h4>
-                    <p className="text-sm md:text-base text-gray-600 mb-4 md:mb-6">
-                      Thank you for reaching out to us. We'll get back to you as
-                      soon as possible.
-                    </p>
+                    <h3 className="font-heading text-h3 text-gray-900 dark:text-white mb-2">Message Sent!</h3>
+                    <p className="text-body text-gray-500 dark:text-gray-400 mb-6">We'll get back to you within 24 hours.</p>
                     <button
-                      onClick={() =>
-                        setFormStatus({
-                          isSubmitting: false,
-                          isSubmitted: false,
-                          error: null,
-                        })
-                      }
-                      className="px-5 py-2 bg-maroon-600 text-white rounded-lg hover:bg-maroon-700 transition-colors duration-300"
+                      onClick={() => setFormStatus({ submitting: false, submitted: false })}
+                      className="btn-secondary active:scale-[0.98] transition-transform"
                     >
                       Send Another Message
                     </button>
                   </div>
                 ) : (
-                  <form
-                    onSubmit={handleSubmit}
-                    className="space-y-4 md:space-y-5"
-                  >
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <form onSubmit={handleSubmit} className="space-y-5">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label
-                          htmlFor="name"
-                          className="block text-sm font-medium text-gray-700 mb-1"
-                        >
-                          Full Name*
-                        </label>
+                        <label className="block text-body-sm font-medium text-gray-700 dark:text-gray-200 mb-1.5">Name *</label>
                         <div className="relative">
-                          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <User className="h-5 w-5 text-gray-400" />
-                          </div>
+                          <User size={16} weight="regular" className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                           <input
-                            type="text"
-                            id="name"
-                            name="name"
-                            value={formData.name}
-                            onChange={handleInputChange}
-                            required
-                            className="pl-10 block w-full shadow-sm rounded-lg border-gray-300 focus:ring-maroon-500 focus:border-maroon-500 sm:text-sm py-3 border"
-                            placeholder="John Doe"
+                            type="text" name="name" required value={formData.name} onChange={handleChange}
+                            className="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl text-body-sm dark:text-white focus:outline-none focus:ring-2 focus:ring-maroon-500 focus:border-transparent transition-all"
+                            placeholder="Your name"
                           />
                         </div>
                       </div>
                       <div>
-                        <label
-                          htmlFor="email"
-                          className="block text-sm font-medium text-gray-700 mb-1"
-                        >
-                          Email Address*
-                        </label>
+                        <label className="block text-body-sm font-medium text-gray-700 dark:text-gray-200 mb-1.5">Email *</label>
                         <div className="relative">
-                          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <Mail className="h-5 w-5 text-gray-400" />
-                          </div>
+                          <EnvelopeSimple size={16} weight="regular" className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                           <input
-                            type="email"
-                            id="email"
-                            name="email"
-                            value={formData.email}
-                            onChange={handleInputChange}
-                            required
-                            className="pl-10 block w-full shadow-sm rounded-lg border-gray-300 focus:ring-maroon-500 focus:border-maroon-500 sm:text-sm py-3 border"
-                            placeholder="example@email.com"
+                            type="email" name="email" required value={formData.email} onChange={handleChange}
+                            className="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl text-body-sm dark:text-white focus:outline-none focus:ring-2 focus:ring-maroon-500 focus:border-transparent transition-all"
+                            placeholder="your@email.com"
                           />
                         </div>
                       </div>
                     </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label
-                          htmlFor="phone"
-                          className="block text-sm font-medium text-gray-700 mb-1"
-                        >
-                          Phone Number
-                        </label>
+                        <label className="block text-body-sm font-medium text-gray-700 dark:text-gray-200 mb-1.5">Phone</label>
                         <div className="relative">
-                          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <Phone className="h-5 w-5 text-gray-400" />
-                          </div>
+                          <Phone size={16} weight="regular" className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                           <input
-                            type="tel"
-                            id="phone"
-                            name="phone"
-                            value={formData.phone}
-                            onChange={handleInputChange}
-                            className="pl-10 block w-full shadow-sm rounded-lg border-gray-300 focus:ring-maroon-500 focus:border-maroon-500 sm:text-sm py-3 border"
-                            placeholder="+263 7X XXX XXXX"
+                            type="tel" name="phone" value={formData.phone} onChange={handleChange}
+                            className="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl text-body-sm dark:text-white focus:outline-none focus:ring-2 focus:ring-maroon-500 focus:border-transparent transition-all"
+                            placeholder="+263..."
                           />
                         </div>
                       </div>
                       <div>
-                        <label
-                          htmlFor="company"
-                          className="block text-sm font-medium text-gray-700 mb-1"
-                        >
-                          Company
-                        </label>
+                        <label className="block text-body-sm font-medium text-gray-700 dark:text-gray-200 mb-1.5">Company</label>
                         <div className="relative">
-                          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <Briefcase className="h-5 w-5 text-gray-400" />
-                          </div>
+                          <Briefcase size={16} weight="regular" className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                           <input
-                            type="text"
-                            id="company"
-                            name="company"
-                            value={formData.company}
-                            onChange={handleInputChange}
-                            className="pl-10 block w-full shadow-sm rounded-lg border-gray-300 focus:ring-maroon-500 focus:border-maroon-500 sm:text-sm py-3 border"
-                            placeholder="Your Company"
+                            type="text" name="company" value={formData.company} onChange={handleChange}
+                            className="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl text-body-sm dark:text-white focus:outline-none focus:ring-2 focus:ring-maroon-500 focus:border-transparent transition-all"
+                            placeholder="Your company"
                           />
                         </div>
                       </div>
                     </div>
-
                     <div>
-                      <label
-                        htmlFor="service"
-                        className="block text-sm font-medium text-gray-700 mb-1"
-                      >
-                        Service of Interest
-                      </label>
-                      <select
-                        id="service"
-                        name="service"
-                        value={formData.service}
-                        onChange={handleInputChange}
-                        className="block w-full shadow-sm rounded-lg border-gray-300 focus:ring-maroon-500 focus:border-maroon-500 sm:text-sm py-3 border"
-                      >
-                        <option value="" disabled>
-                          Select a service
-                        </option>
-                        {serviceOptions.map((service, idx) => (
-                          <option key={idx} value={service}>
-                            {service}
-                          </option>
-                        ))}
-                      </select>
+                      <label className="block text-body-sm font-medium text-gray-700 dark:text-gray-200 mb-1.5">Service Needed</label>
+                      <div className="relative">
+                        <select
+                          name="service" value={formData.service} onChange={handleChange}
+                          className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl text-body-sm dark:text-white focus:outline-none focus:ring-2 focus:ring-maroon-500 focus:border-transparent transition-all appearance-none"
+                        >
+                          <option value="">Select a service...</option>
+                          {serviceOptions.map((s) => (
+                            <option key={s} value={s}>{s}</option>
+                          ))}
+                        </select>
+                        <CaretDown size={16} weight="bold" className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                      </div>
                     </div>
-
                     <div>
-                      <label
-                        htmlFor="subject"
-                        className="block text-sm font-medium text-gray-700 mb-1"
-                      >
-                        Subject*
-                      </label>
+                      <label className="block text-body-sm font-medium text-gray-700 dark:text-gray-200 mb-1.5">Subject</label>
                       <input
-                        type="text"
-                        id="subject"
-                        name="subject"
-                        value={formData.subject}
-                        onChange={handleInputChange}
-                        required
-                        className="block w-full shadow-sm rounded-lg border-gray-300 focus:ring-maroon-500 focus:border-maroon-500 sm:text-sm py-3 border"
-                        placeholder="How can we help you?"
+                        type="text" name="subject" value={formData.subject} onChange={handleChange}
+                        className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl text-body-sm dark:text-white focus:outline-none focus:ring-2 focus:ring-maroon-500 focus:border-transparent transition-all"
+                        placeholder="How can we help?"
                       />
                     </div>
-
                     <div>
-                      <label
-                        htmlFor="message"
-                        className="block text-sm font-medium text-gray-700 mb-1"
-                      >
-                        Message*
-                      </label>
-                      <textarea
-                        id="message"
-                        name="message"
-                        rows="4"
-                        value={formData.message}
-                        onChange={handleInputChange}
-                        required
-                        className="block w-full shadow-sm rounded-lg border-gray-300 focus:ring-maroon-500 focus:border-maroon-500 sm:text-sm border"
-                        placeholder="Write your message here..."
-                      ></textarea>
+                      <label className="block text-body-sm font-medium text-gray-700 dark:text-gray-200 mb-1.5">Message *</label>
+                      <div className="relative">
+                        <ChatCircle size={16} weight="regular" className="absolute left-3 top-3 text-gray-400" />
+                        <textarea
+                          name="message" required rows={4} value={formData.message} onChange={handleChange}
+                          className="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl text-body-sm dark:text-white focus:outline-none focus:ring-2 focus:ring-maroon-500 focus:border-transparent transition-all resize-none"
+                          placeholder="Tell us about your project..."
+                        />
+                      </div>
                     </div>
-
-                    <div>
-                      <button
-                        type="submit"
-                        disabled={formStatus.isSubmitting}
-                        className={`inline-flex justify-center items-center w-full px-6 py-3 border border-transparent rounded-full shadow-sm text-base font-medium text-white bg-maroon-600 hover:bg-maroon-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-maroon-500 transition-all duration-300 ${
-                          formStatus.isSubmitting
-                            ? "opacity-75 cursor-not-allowed"
-                            : ""
-                        }`}
-                      >
-                        {formStatus.isSubmitting ? (
-                          <>
-                            <svg
-                              className="animate-spin -ml-1 mr-2 h-5 w-5 text-white"
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                            >
-                              <circle
-                                className="opacity-25"
-                                cx="12"
-                                cy="12"
-                                r="10"
-                                stroke="currentColor"
-                                strokeWidth="4"
-                              ></circle>
-                              <path
-                                className="opacity-75"
-                                fill="currentColor"
-                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                              ></path>
-                            </svg>
-                            Sending...
-                          </>
-                        ) : (
-                          <>
-                            <Send className="mr-2 h-5 w-5" />
-                            Send Message
-                          </>
-                        )}
-                      </button>
-                    </div>
+                    <button
+                      type="submit"
+                      disabled={formStatus.submitting}
+                      className="btn-primary w-full !justify-center !py-3 disabled:opacity-60 disabled:cursor-not-allowed active:scale-[0.98] transition-transform"
+                    >
+                      {formStatus.submitting ? (
+                        <>
+                          <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                          Sending...
+                        </>
+                      ) : (
+                        <>
+                          <PaperPlaneTilt size={16} weight="bold" />
+                          Send Message
+                        </>
+                      )}
+                    </button>
                   </form>
                 )}
               </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Products & Services Overview */}
-      <section className="py-12 md:py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-12"
-          >
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3 md:mb-4">
-              Our Products & Services
-            </h2>
-            <p className="text-base md:text-lg text-gray-600 max-w-3xl mx-auto">
-              We offer a comprehensive range of high-quality aluminium
-              fabrication, ceiling solutions, and security systems.
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-            {/* Product Category: Aluminium and Glass */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 }}
-              className="bg-gray-50 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300"
-            >
-              <div className="p-4 md:p-6">
-                <h3 className="text-lg md:text-xl font-semibold text-gray-900 mb-3">
-                  Aluminium & Glass Products
-                </h3>
-                <ul className="space-y-2">
-                  <li className="flex items-start">
-                    <ChevronRight className="h-5 w-5 text-maroon-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-sm md:text-base text-gray-600">
-                      Casement & Sliding Windows
-                    </span>
-                  </li>
-                  <li className="flex items-start">
-                    <ChevronRight className="h-5 w-5 text-maroon-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-sm md:text-base text-gray-600">
-                      Hinged & Sliding Doors
-                    </span>
-                  </li>
-                  <li className="flex items-start">
-                    <ChevronRight className="h-5 w-5 text-maroon-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-sm md:text-base text-gray-600">
-                      Office Partitions & Shop Fronts
-                    </span>
-                  </li>
-                  <li className="flex items-start">
-                    <ChevronRight className="h-5 w-5 text-maroon-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-sm md:text-base text-gray-600">
-                      Shower Cubicles & Enclosures
-                    </span>
-                  </li>
-                  <li className="flex items-start">
-                    <ChevronRight className="h-5 w-5 text-maroon-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-sm md:text-base text-gray-600">
-                      Curtain Walls & Glass Facades
-                    </span>
-                  </li>
-                </ul>
-              </div>
-            </motion.div>
-
-            {/* Product Category: Ceilings */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.2 }}
-              className="bg-gray-50 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300"
-            >
-              <div className="p-4 md:p-6">
-                <h3 className="text-lg md:text-xl font-semibold text-gray-900 mb-3">
-                  Ceiling Solutions
-                </h3>
-                <ul className="space-y-2">
-                  <li className="flex items-start">
-                    <ChevronRight className="h-5 w-5 text-maroon-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-sm md:text-base text-gray-600">
-                      Gypsum Ceilings
-                    </span>
-                  </li>
-                  <li className="flex items-start">
-                    <ChevronRight className="h-5 w-5 text-maroon-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-sm md:text-base text-gray-600">
-                      Fiberglass Ceilings
-                    </span>
-                  </li>
-                  <li className="flex items-start">
-                    <ChevronRight className="h-5 w-5 text-maroon-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-sm md:text-base text-gray-600">
-                      Wooden False Ceilings
-                    </span>
-                  </li>
-                  <li className="flex items-start">
-                    <ChevronRight className="h-5 w-5 text-maroon-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-sm md:text-base text-gray-600">
-                      Metal Ceilings
-                    </span>
-                  </li>
-                  <li className="flex items-start">
-                    <ChevronRight className="h-5 w-5 text-maroon-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-sm md:text-base text-gray-600">
-                      PVC & Glass False Ceilings
-                    </span>
-                  </li>
-                </ul>
-              </div>
-            </motion.div>
-
-            {/* Product Category: Security */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.3 }}
-              className="bg-gray-50 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300"
-            >
-              <div className="p-4 md:p-6">
-                <h3 className="text-lg md:text-xl font-semibold text-gray-900 mb-3">
-                  Security Systems
-                </h3>
-                <ul className="space-y-2">
-                  <li className="flex items-start">
-                    <ChevronRight className="h-5 w-5 text-maroon-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-sm md:text-base text-gray-600">
-                      Burglar Bars & Flyscreens
-                    </span>
-                  </li>
-                  <li className="flex items-start">
-                    <ChevronRight className="h-5 w-5 text-maroon-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-sm md:text-base text-gray-600">
-                      Access Control & Biometric Readers
-                    </span>
-                  </li>
-                  <li className="flex items-start">
-                    <ChevronRight className="h-5 w-5 text-maroon-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-sm md:text-base text-gray-600">
-                      Stand Alone Locks
-                    </span>
-                  </li>
-                  <li className="flex items-start">
-                    <ChevronRight className="h-5 w-5 text-maroon-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-sm md:text-base text-gray-600">
-                      Automated Sliding Doors
-                    </span>
-                  </li>
-                  <li className="flex items-start">
-                    <ChevronRight className="h-5 w-5 text-maroon-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-sm md:text-base text-gray-600">
-                      Automated Sectional Garage Doors
-                    </span>
-                  </li>
-                </ul>
-              </div>
             </motion.div>
           </div>
         </div>
       </section>
 
-      {/* FAQ Section */}
-      <section className="py-12 md:py-16 bg-gray-50">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            className="text-center mb-12"
-          >
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3 md:mb-4">
-              Frequently Asked Questions
-            </h2>
-            <p className="text-base md:text-lg text-gray-600">
-              Find answers to common questions about our services and products.
-            </p>
-          </motion.div>
+      {/* ── FAQ ── */}
+      <section className="section-padding bg-white dark:bg-gray-950 relative overflow-hidden">
+        {/* Subtle bg image */}
+        <div className="absolute inset-0 opacity-[0.02]">
+          <img src="/10.jpg" alt="" className="w-full h-full object-cover" />
+        </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="space-y-4 md:space-y-6"
-          >
-            {/* Add FAQ items here */}
-            <details className="bg-white rounded-lg shadow-sm p-4 md:p-6">
-              <summary className="font-medium text-base md:text-lg cursor-pointer focus:outline-none flex justify-between items-center">
-                <span>What areas do you service in Zimbabwe?</span>
-                <ChevronRight className="h-5 w-5 transform transition-transform duration-300" />
-              </summary>
-              <p className="mt-3 text-sm md:text-base text-gray-600">
-                We service all areas in Harare and can undertake projects
-                throughout Zimbabwe. For projects outside Harare, please contact
-                us to discuss logistics and scheduling.
-              </p>
-            </details>
-
-            <details className="bg-white rounded-lg shadow-sm p-4 md:p-6">
-              <summary className="font-medium text-base md:text-lg cursor-pointer focus:outline-none flex justify-between items-center">
-                <span>Do you provide free quotes for projects?</span>
-                <ChevronRight className="h-5 w-5 transform transition-transform duration-300" />
-              </summary>
-              <p className="mt-3 text-sm md:text-base text-gray-600">
-                Yes, we provide free, no-obligation quotes for all projects. Our
-                team can visit your site to take accurate measurements and
-                understand your specific requirements before providing a
-                detailed quote.
-              </p>
-            </details>
-
-            <details className="bg-white rounded-lg shadow-sm p-4 md:p-6">
-              <summary className="font-medium text-base md:text-lg cursor-pointer focus:outline-none flex justify-between items-center">
-                <span>What is the typical lead time for your products?</span>
-                <ChevronRight className="h-5 w-5 transform transition-transform duration-300" />
-              </summary>
-              <p className="mt-3 text-sm md:text-base text-gray-600">
-                Lead times vary depending on the product and project scope.
-                Generally, standard aluminum windows and doors take 7-14 days,
-                while custom shopfitting projects may take 2-4 weeks. We'll
-                provide specific timelines during the quotation process.
-              </p>
-            </details>
-
-            <details className="bg-white rounded-lg shadow-sm p-4 md:p-6">
-              <summary className="font-medium text-base md:text-lg cursor-pointer focus:outline-none flex justify-between items-center">
-                <span>Do you offer after-sales service and maintenance?</span>
-                <ChevronRight className="h-5 w-5 transform transition-transform duration-300" />
-              </summary>
-              <p className="mt-3 text-sm md:text-base text-gray-600">
-                Yes, we offer comprehensive after-sales service and maintenance
-                for all our products. We provide warranties on our workmanship
-                and can arrange regular maintenance services to ensure your
-                installations remain in optimal condition.
-              </p>
-            </details>
-          </motion.div>
+        <div className="relative z-10 container-width">
+          <SectionHeader
+            label="FAQ"
+            title="Frequently Asked Questions"
+            subtitle={<>Have questions about our <Link to="/services" className="hyperlink">services</Link>? Find quick answers below.</>}
+          />
+          <div className="max-w-3xl mx-auto space-y-3">
+            {faqData.map(({ q, a }, i) => (
+              <motion.div
+                key={i}
+                {...fadeUp}
+                transition={{ delay: i * 0.08, duration: 0.5 }}
+                className="card rounded-2xl overflow-hidden"
+              >
+                <button
+                  onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                  className="flex items-center justify-between w-full p-5 text-left hover:bg-gray-50 dark:hover:bg-gray-800 active:scale-[0.98] transition-transform transition-colors"
+                >
+                  <span className="font-heading text-body font-semibold text-gray-900 dark:text-white pr-4">{q}</span>
+                  <CaretDown
+                    size={18}
+                    weight="bold"
+                    className={`text-maroon-600 flex-shrink-0 transition-transform duration-300 ${openFaq === i ? 'rotate-180' : ''}`}
+                  />
+                </button>
+                <div className={`overflow-hidden transition-all duration-300 ${openFaq === i ? 'max-h-40 pb-5' : 'max-h-0'}`}>
+                  <p className="px-5 text-body text-gray-500 dark:text-gray-400">{a}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* Social Media Section */}
-      <section className="py-12 md:py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            className="text-center mb-8 md:mb-12"
-          >
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3 md:mb-4">
-              Connect With Us
-            </h2>
-            <p className="text-base md:text-lg text-gray-600 max-w-3xl mx-auto">
-              Follow us on social media for the latest updates, project
-              showcases, and special offers.
-            </p>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="flex flex-wrap justify-center gap-4 md:gap-6"
-          >
-            <a
-              href="https://www.facebook.com/share/14DcFhcoebh/?mibextid=wwXIfr"
-              className="inline-flex items-center justify-center w-12 h-12 md:w-14 md:h-14 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors duration-300"
-            >
-              <Facebook className="w-5 h-5 md:w-6 md:h-6" />
-            </a>
-            <a
-              href="https://www.instagram.com/margcha.shopfitting?igsh=MXg5ZW1kazkxZ3UycQ=="
-              className="inline-flex items-center justify-center w-12 h-12 md:w-14 md:h-14 bg-pink-600 text-white rounded-full hover:bg-pink-700 transition-colors duration-300"
-            >
-              <Instagram className="w-5 h-5 md:w-6 md:h-6" />
-            </a>
-            <a
-              href="https://www.linkedin.com/in/margcha-shopfitting-1428b6269?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
-              className="inline-flex items-center justify-center w-12 h-12 md:w-14 md:h-14 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-colors duration-300"
-            >
-              <Linkedin className="w-5 h-5 md:w-6 md:h-6" />
-            </a>
-            <a
-              href="https://x.com/margchash?t=y0a2AxRqvXI4vHFxV-Jusw&s=09"
-              className="inline-flex items-center justify-center w-12 h-12 md:w-14 md:h-14 bg-blue-400 text-white rounded-full hover:bg-blue-500 transition-colors duration-300"
-            >
-              <Twitter className="w-5 h-5 md:w-6 md:h-6" />
-            </a>
-          </motion.div>
+      {/* ── Social CTA Banner ── */}
+      <section className="py-16 md:py-20 gradient-maroon relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.05),transparent_60%)]" />
+        <div className="absolute inset-0 opacity-[0.02]">
+          <img src="/11.jpg" alt="" className="w-full h-full object-cover" />
         </div>
-      </section>
 
-      {/* Call to Action */}
-      <section className="py-12 md:py-16 bg-maroon-900">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            className="text-white"
-          >
-            <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4 md:mb-6">
-              Ready to Transform Your Space?
+        <div className="relative z-10 container-width text-center text-white">
+          <motion.div {...fadeUp}>
+            <h2 className="font-heading text-h2 md:text-[2.5rem] font-bold mb-4">
+              Stay Connected With Us
             </h2>
-            <p className="text-base md:text-lg text-gray-200 mb-6 md:mb-8 max-w-3xl mx-auto">
-              Contact us today to discuss your project needs and get a free
-              consultation from our team of experts.
+            <p className="text-body-lg text-gray-300 max-w-xl mx-auto mb-8">
+              Follow us on social media for project updates, inspiration, and behind-the-scenes content from our <Link to="/projects" className="hyperlink">latest projects</Link>.
             </p>
-            <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <a
-                href="tel:+2637835746777"
-                className="inline-flex items-center justify-center px-6 py-3 border-2 border-white text-base font-medium rounded-md text-white hover:bg-white hover:text-maroon-900 transition-colors duration-300"
-              >
-                <Phone className="w-5 h-5 mr-2" />
-                Call Now
-              </a>
-              <a
-                href="#contact-form"
-                className="inline-flex items-center justify-center px-6 py-3 border-2 border-white bg-white text-base font-medium rounded-md text-maroon-900 hover:bg-transparent hover:text-white transition-colors duration-300"
-              >
-                <Send className="w-5 h-5 mr-2" />
-                Send Inquiry
-              </a>
+            <div className="flex justify-center gap-4">
+              {socials.map(({ Icon, href, label }) => (
+                <a
+                  key={href}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={label}
+                  className="glass w-12 h-12 rounded-xl flex items-center justify-center text-white hover:bg-white/20 active:scale-[0.98] transition-transform transition-all duration-300"
+                >
+                  <Icon size={22} weight="regular" />
+                </a>
+              ))}
             </div>
           </motion.div>
         </div>

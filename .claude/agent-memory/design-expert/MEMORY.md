@@ -1,0 +1,1 @@
+- [project_margcha.md](project_margcha.md) - Margcha Shopfitting website: React/Tailwind/Framer Motion site for Zimbabwe shopfitting company. Architecture, brand palette, known issues (8 fonts, duplicate navs, no footer, over-animation).
